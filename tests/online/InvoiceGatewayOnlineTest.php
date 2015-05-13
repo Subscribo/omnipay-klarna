@@ -6,6 +6,7 @@ use KlarnaFlags;
 use Omnipay\Tests\GatewayTestCase;
 use Omnipay\Klarna\InvoiceGateway;
 
+
 class InvoiceGatewayOnlineTest extends GatewayTestCase
 {
     public function setUp()
@@ -30,6 +31,19 @@ class InvoiceGatewayOnlineTest extends GatewayTestCase
             'city'     => 'Hausmannstätten',
             'country'  => 'at',
             'phone'    => '0676 2600000',
+            'email'    => 'youremail@email.com',
+        ];
+        $this->deniedCard = $deniedCard = [
+            'gender' => 'Female',
+            'birthday' => '1980-04-14',
+            'firstName' => 'Testperson-at',
+            'lastName' => 'Denied',
+            'address1' => 'Klarna-Straße 1/2/3',
+            'address2' => null,
+            'postCode' => '8070',
+            'city'     => 'Hausmannstätten',
+            'country'  => 'at',
+            'phone'    => '0676 2800000',
             'email'    => 'youremail@email.com',
         ];
         $this->shoppingCart = [
@@ -144,6 +158,25 @@ class InvoiceGatewayOnlineTest extends GatewayTestCase
         $this->assertTrue($response->isSuccessful());
         $this->assertNotEmpty($response->getTransactionReference());
         $this->assertSame($response->getTransactionReference(), $response->getInvoiceNumber());
+    }
+
+    /**
+     * @expectedException \KlarnaException
+     * @expectedExceptionCode 2102
+     */
+    public function testAuthorizeDenied()
+    {
+        $data = [
+            'card' => $this->deniedCard,
+        ];
+        $request = $this->gateway->authorize($data);
+        $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceAuthorizeRequest', $request);
+        $request->setItems($this->shoppingCart);
+
+        if (empty($this->sharedSecret)) {
+            $this->markTestSkipped('API credentials not provided, online test skipped.');
+        }
+        $response = $request->send();
     }
 
 

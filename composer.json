@@ -48,7 +48,7 @@
         "omnipay/common": "^2.3.4",
         "egeloen/http-adapter": "^0.8@dev",
         "subscribo/omnipay-subscribo-shared": "^0.2.3",
-        "subscribo/klarna-invoice-sdk-wrapped": "^1.0.0"
+        "subscribo/klarna-invoice-sdk-wrapped": "^1.0.1"
     },
     "require-dev": {
         "omnipay/tests": "^2.0"
