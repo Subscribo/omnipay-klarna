@@ -1,0 +1,61 @@
+{
+    "name": "subscribo/omnipay-klarna",
+    "type": "library",
+    "description": "Klarna driver for the Omnipay payment processing library",
+    "keywords": [
+        "Klarna",
+        "Invoice",
+        "Part payment",
+        "gateway",
+        "merchant",
+        "omnipay",
+        "pay",
+        "payment"
+    ],
+    "homepage": "http://www.subscribo.io",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Adrian Macneil",
+            "email": "adrian@adrianmacneil.com"
+        },
+        {
+            "name": "Omnipay Contributors",
+            "homepage": "https://github.com/thephpleague/omnipay-dummy/contributors"
+        },
+        {
+            "name": "Slavo"
+        },
+        {
+            "name": "Kochabo",
+            "homepage": "http://kochabo.com"
+        },
+        {
+            "name": "Omnipay Klarna driver contributors",
+            "homepage": "https://github.com/Subscribo/omnipay-klarna/contributors"
+        }
+    ],
+    "support": {
+        "email": "packages@subscribo.io",
+        "issues": "https://github.com/Subscribo/omnipay-klarna/issues",
+        "source": "https://github.com/Subscribo/omnipay-klarna"
+    },
+    "autoload": {
+        "psr-4": {"Omnipay\\Klarna\\": "src/"}
+    },
+    "require": {
+        "php": "^5.4 || 7.0@dev",
+        "omnipay/common": "^2.3.4",
+        "egeloen/http-adapter": "^0.8@dev",
+        "subscribo/omnipay-subscribo-shared": "^0.2.3",
+        "subscribo/klarna-invoice-sdk-wrapped": "^1.0.0"
+    },
+    "require-dev": {
+        "omnipay/tests": "^2.0"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.1.x-dev"
+        }
+    }
+}
