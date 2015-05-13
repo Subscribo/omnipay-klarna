@@ -20,8 +20,9 @@ Stable version has not yet been released.
 ## Installation
 
 Omnipay Klarna driver is installed via [Composer](http://getcomposer.org/). To install, add it
-to your `composer.json` file (you might need to add also development version of egeloen/http-adapter):
+to your `composer.json` file (you might need to add also development version of egeloen/http-adapter).
 
+For alpha version use:
 ```json
 {
     "require": {
@@ -31,7 +32,17 @@ to your `composer.json` file (you might need to add also development version of 
 }
 ```
 
-And run composer to update your dependencies:
+For development version use:
+```json
+{
+    "require": {
+        "subscribo/omnipay-klarna": "^0.1.0@dev",
+        "egeloen/http-adapter": "^0.8@dev"
+    }
+}
+```
+
+After updating composer.json run composer update to update your dependencies:
 ```sh
     $ curl -s http://getcomposer.org/installer | php
     $ php composer.phar update
