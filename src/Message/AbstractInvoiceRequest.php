@@ -41,6 +41,9 @@ abstract class AbstractInvoiceRequest extends AbstractRequest
             $currency,
             $mode
         );
+        if (( ! empty($data['clientIp']))) {
+            $klarnaConnector->setClientIP($data['clientIp']);
+        }
         return $klarnaConnector;
     }
 

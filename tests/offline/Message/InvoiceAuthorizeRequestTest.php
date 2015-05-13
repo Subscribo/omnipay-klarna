@@ -14,6 +14,7 @@ class InvoiceAuthorizeRequestTest extends TestCase
         $request->setSharedSecret(uniqid());
         $request->setLocale('de_at');
         $request->setTestMode(true);
+        $request->setClientIp('192.0.2.1');
         $card = [
             'gender' => 'Male',
             'birthday' => '1960-04-14',
@@ -29,8 +30,7 @@ class InvoiceAuthorizeRequestTest extends TestCase
         $this->assertSame('de', $data['language']);
         $this->assertSame('AT', $data['country']);
         $this->assertSame('EUR', $data['currency']);
-
-
+        $this->assertSame('192.0.2.1', $data['clientIp']);
     }
 
     /**

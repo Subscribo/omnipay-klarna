@@ -177,6 +177,14 @@ class InvoiceGatewayOnlineTest extends GatewayTestCase
             $this->markTestSkipped('API credentials not provided, online test skipped.');
         }
         $response = $request->send();
+        $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceAuthorizeResponse', $response);
+        $this->assertTrue($response->isSuccessful());
+        $reservationNumber = $response->getReservationNumber();
+        $this->assertNotEmpty($reservationNumber);
+        $data2 = ['reservationNumber' => $reservationNumber];
+        $request2 = $this->gateway->capture($data2);
+        $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCaptureRequest', $request2);
+        $response2 = $request2->send();
     }
 
 
