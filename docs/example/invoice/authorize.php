@@ -104,9 +104,9 @@ try {
     $request->setItems($shoppingCart);
     $response = $request->send();
     $reservationNumber = $response->getReservationNumber();
-    echo '<p>Reservation number:'.$reservationNumber.'</p>';
+    echo '<p>Reservation number: '.$reservationNumber.'</p>';
 
-    echo '<p>Invoice status:'.$response->getInvoiceStatus().'</p>';
+    echo '<p>Invoice status: '.$response->getInvoiceStatus().'</p>';
 
     if ($response->isSuccessful()) {
         echo '<h3>Authorization request was resolved</h3>';

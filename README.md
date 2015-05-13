@@ -2,6 +2,8 @@
 
 **Klarna driver for the Omnipay PHP payment processing library**
 
+[![Build Status](https://travis-ci.org/Subscribo/omnipay-klarna.svg)](https://travis-ci.org/Subscribo/omnipay-klarna)
+
 [Omnipay](https://github.com/thephpleague/omnipay) is a framework agnostic, multi-gateway payment
 processing library for PHP 5.3+. This package implements Klarna support for Omnipay.
 
