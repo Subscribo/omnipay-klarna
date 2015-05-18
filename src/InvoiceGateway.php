@@ -4,6 +4,7 @@ namespace Omnipay\Klarna;
 
 use Omnipay\Klarna\AbstractGateway;
 use Omnipay\Klarna\Traits\InvoiceGatewayDefaultParametersGettersAndSettersTrait;
+use Omnipay\Klarna\Widget\InvoiceWidget;
 
 class InvoiceGateway extends AbstractGateway
 {
@@ -47,4 +48,14 @@ class InvoiceGateway extends AbstractGateway
         return $this->createRequest('Omnipay\\Klarna\\Message\\InvoiceCheckOrderStatusRequest', $parameters);
     }
 
+    /**
+     * @param array $parameters
+     * @return InvoiceWidget
+     */
+    public function getWidget(array $parameters = [])
+    {
+        $parameters = array_replace($this->getParameters(), $parameters);
+        $widget = new InvoiceWidget($parameters);
+        return $widget;
+    }
 }

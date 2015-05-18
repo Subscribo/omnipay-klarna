@@ -11,6 +11,7 @@ use KlarnaLanguage;
 use Omnipay\Klarna\Message\AbstractInvoiceRequest;
 use Omnipay\Klarna\Message\InvoiceAuthorizeResponse;
 use Omnipay\Klarna\Traits\InvoiceGatewayDefaultParametersGettersAndSettersTrait;
+use Omnipay\Klarna\Widget\InvoiceWidget;
 use Omnipay\Common\Exception\InvalidRequestException;
 use Subscribo\Omnipay\Shared\CreditCard;
 use Subscribo\Omnipay\Shared\Helpers\AddressParser;
@@ -92,13 +93,64 @@ class InvoiceAuthorizeRequest extends AbstractInvoiceRequest
         return $this->response;
     }
 
+    /**
+     * @param array $parameters
+     * @return InvoiceWidget
+     */
+    public function getWidget(array $parameters = [])
+    {
+        $parameters = array_replace($this->getParameters(), $parameters);
+        if (empty($parameters['price'])) {
+            $amount = $this->getAmountInteger();
+            if ($amount <= 0) {
+                $amount = $this->calculateAmount();
+            }
+            $parameters['price'] = $amount;
+        }
+        $widget = new InvoiceWidget($parameters);
+        return $widget;
+    }
 
+    /**
+     * @return string
+     */
+    public function calculateAmount()
+    {
+        $this->validate('merchantId', 'sharedSecret', 'country', 'language', 'currency');
+        $data = $this->getParameters();
+        $data['articles'] = $this->extractArticles($this->getItems());
+        $k = $this->createKlarnaConnector($data);
+        foreach ($data['articles'] as $article) {
+            $flags = isset($article['flags']) ? $article['flags'] : KlarnaFlags::INC_VAT;
+            $k->addArticle(
+                $article['quantity'],
+                $article['artNo'],
+                $article['title'],
+                $article['price'],
+                $article['vat'],
+                $article['discount'],
+                $flags
+            );
+        }
+        $summarized = $k->summarizeGoodsList();
+        $amount = bcdiv(strval($summarized), '100', 2);
+        return $amount;
+    }
+
+    /**
+     * @param array $data
+     * @return InvoiceAuthorizeResponse
+     */
     protected function createResponse(array $data)
     {
         return new InvoiceAuthorizeResponse($this, $data);
     }
 
-
+    /**
+     * @param CreditCard $card
+     * @param bool $isShipping
+     * @return KlarnaAddr
+     */
     protected function createKlarnaAddr(CreditCard $card, $isShipping = false)
     {
         $phone = $isShipping ? $card->getShippingPhone() : $card->getPhone();
