@@ -162,7 +162,6 @@ class InvoiceGatewayOnlineTest extends GatewayTestCase
 
     /**
      * @expectedException \KlarnaException
-     * @expectedExceptionCode 2102
      */
     public function testAuthorizeDenied()
     {
