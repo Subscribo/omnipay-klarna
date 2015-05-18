@@ -94,6 +94,21 @@ For example code see:
 * GET [Check page](docs/example/invoice/check.php)
 * GET [Capture page](docs/example/invoice/capture.php)
 
+### InvoiceWidget
+
+Both InvoiceGateway and InvoiceAuthorizeRequest have method getWidget(), which is returning InvoiceWidget, with (among others) following methods
+
+* isRenderable()
+* render()
+* renderPaymentMethodWidget()
+* renderLogoUrl()
+* renderTooltip()
+* renderTermsInvoiceHtml()
+* renderTermsConsentHtml()
+* renderTermsAccountHtml()
+
+For use and expected parameters see example code
+
 ### General instructions
 
 For general usage instructions, please see the main [Omnipay](https://github.com/thephpleague/omnipay)

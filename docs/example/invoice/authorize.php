@@ -102,6 +102,8 @@ $shoppingCart = [
 try {
     $request = $gateway->authorize($data);
     $request->setItems($shoppingCart);
+    echo $request->getWidget(['charge' => '0.95']);
+    echo '<p>Calculated amount: '.$request->calculateAmount().'</p>';
     $response = $request->send();
     $reservationNumber = $response->getReservationNumber();
     echo '<p>Reservation number: '.$reservationNumber.'</p>';

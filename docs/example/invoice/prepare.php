@@ -22,9 +22,24 @@ $gateway->setMerchantId($merchantId)
     ->setCountry('at')
     ->setCurrency('eur')
     ->setTestMode(true);
+$widget = $gateway->getWidget(['AGBUrl' => $exampleUrlBase.'/AGB', 'color' => 'blue-black', 'charge' => '0.95']);
 
+    echo '<img src="'.$widget->renderLogoUrl(['width' => 200]).'">'."\n";
 ?>
+
         <h2> Gateway Name: <?php echo $gateway->getName(); ?></h2>
+        <div>
+            <?php echo $widget->renderTooltip(); ?>
+        </div>
+        <div>
+            <?php echo $widget->renderTermsInvoiceHtml(); ?>
+        </div>
+        <div>
+            <?php echo $widget->renderTermsConsentHtml(); ?>
+        </div>
+        <div>
+            <?php echo $widget->renderTermsAccountHtml(); ?>
+        </div>
         <h3> You can try to be invoiced on our behalf. Bellow you can select preferred workflow.</h3>
 
         <form action="<?php echo $exampleUrlBase ?>/authorize" method="POST">
