@@ -9,8 +9,6 @@
 
 use Omnipay\Omnipay;
 
-
-
 $merchantId = env('KLARNA_MERCHANT_ID');
 
 $exampleUrlBase = 'https://your.web.site.example/path/to/example/invoice';

@@ -8,8 +8,6 @@
 <?php
 
 use Omnipay\Omnipay;
-use KlarnaFlags;
-use KlarnaException;
 
 $merchantId = getenv('KLARNA_MERCHANT_ID');
 $sharedSecret = getenv('KLARNA_SHARED_SECRET');
@@ -95,7 +93,7 @@ $shoppingCart = [
         'identifier' => 'HANDLING',
         'price' => '1.00',
         'quantity' => 5,
-        'flags' => KlarnaFlags::IS_HANDLING,
+        'flags' => \KlarnaFlags::IS_HANDLING,
     ],
 ];
 
@@ -120,7 +118,7 @@ try {
         echo '<h3>Authorization request is pending</h3>';
         echo '<a href="'.$exampleUrlBase.'/check?reservation_number='.$reservationNumber.'">Check again</a>';
     }
-} catch (KlarnaException $e) {
+} catch (\KlarnaException $e) {
     echo '<p>KlarnaException occurred: '.$e->getMessage().' (Code: '.$e->getCode().')</p>';
 } catch (\Exception $e) {
     echo '<p>Some error occurred: '.$e->getMessage().' (Code: '.$e->getCode().')</p>';

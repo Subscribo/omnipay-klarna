@@ -8,8 +8,6 @@
 <?php
 
 use Omnipay\Omnipay;
-use KlarnaException;
-
 
 $merchantId = getenv('KLARNA_MERCHANT_ID');
 $sharedSecret = getenv('KLARNA_SHARED_SECRET');
@@ -82,7 +80,7 @@ try {
     echo '<li><a href="'.$exampleUrlBase.'/check?invoice_number='.$invoiceNumber.'">Check by invoice number</a></li>';
     echo "</ul>\n";
 
-} catch (KlarnaException $e) {
+} catch (\KlarnaException $e) {
     echo '<p>KlarnaException occurred: '.$e->getMessage().' (Code: '.$e->getCode().')</p>';
 } catch (\Exception $e) {
     echo '<p>Some error occurred: '.$e->getMessage().' (Code: '.$e->getCode().')</p>';

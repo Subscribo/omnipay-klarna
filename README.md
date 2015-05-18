@@ -49,7 +49,7 @@ After updating composer.json run composer update to update your dependencies:
 ```
 
 If you want to run online tests, you also need to set environment variables KLARNA_MERCHANT_ID and KLARNA_SHARED_SECRET with your Klarna API test credentials.
-These are also needed for examples, provided in docs/example/invoice (they are used usually around lines 14-15 of the examples, but you can modify it and provide the credentials differently).
+These are also needed for examples, provided in docs/example/invoice (they are used usually around lines 12-13 of the examples, but you can modify it and provide the credentials differently).
 
 ## Basic Usage
 
