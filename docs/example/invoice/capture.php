@@ -23,7 +23,7 @@ $checkPageUrlStubInvoice = 'https://your.web.site.example/path/to/check?invoice_
 $gateway = Omnipay::create('Klarna\\Invoice');
 $gateway->setMerchantId($merchantId)
     ->setSharedSecret($sharedSecret)
-    ->setLocale('de_at')
+    ->setLocale('de_de')
     ->setTestMode(true);
 
 $reservationNumber = isset($_GET['reservation_number']) ? $_GET['reservation_number'] : null;

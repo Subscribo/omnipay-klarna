@@ -21,7 +21,7 @@ $invoiceNumber =  isset($_REQUEST['invoice_number']) ? $_REQUEST['invoice_number
 $gateway = Omnipay::create('Klarna\\Invoice');
 $gateway->setMerchantId($merchantId)
     ->setSharedSecret($sharedSecret)
-    ->setLocale('de_at')
+    ->setLocale('de_de')
     ->setTestMode(true);
 
 echo '<h2>Gateway Name: '.$gateway->getName()."</h2>\n";

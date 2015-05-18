@@ -20,7 +20,7 @@ $workflow = isset($_REQUEST['workflow']) ? $_REQUEST['workflow'] : null;
 $gateway = Omnipay::create('Klarna\\Invoice');
 $gateway->setMerchantId($merchantId)
     ->setSharedSecret($sharedSecret)
-    ->setLocale('de_at')
+    ->setLocale('de_de')
     ->setTestMode(true);
 
 echo '<h2>Gateway Name: '.$gateway->getName()."</h2>\n";
@@ -49,30 +49,30 @@ echo '<h3>Used workflow: '.$workflow."</h3>\n";
 
 if ($denied) {
     $card = [
-        'gender' => 'Female',
-        'birthday' => '1980-04-14',
-        'firstName' => 'Testperson-at',
+        'gender' => 'Male',
+        'birthday' => '1960-07-07',
+        'firstName' => 'Testperson-de',
         'lastName' => 'Denied',
-        'address1' => 'Klarna-Straße 1/2/3',
-        'address2' => null,
-        'postCode' => '8070',
-        'city'     => 'Hausmannstätten',
-        'country'  => 'at',
-        'phone'    => '0676 2800000',
+        'address1' => 'Hellersbergstraße',
+        'address2' => '14',
+        'postCode' => '41460',
+        'city'     => 'Neuss',
+        'country'  => 'de',
+        'phone'    => '01522113356',
         'email'    => $email,
     ];
 } else {
     $card = [
         'gender' => 'Male',
-        'birthday' => '1960-04-14',
-        'firstName' => 'Testperson-at',
+        'birthday' => '1960-07-07',
+        'firstName' => 'Testperson-de',
         'lastName' => 'Approved',
-        'address1' => 'Klarna-Straße 1/2/3',
-        'address2' => null,
-        'postCode' => '8071',
-        'city'     => 'Hausmannstätten',
-        'country'  => 'at',
-        'phone'    => '0676 2600000',
+        'address1' => 'Hellersbergstraße',
+        'address2' => '14',
+        'postCode' => '41460',
+        'city'     => 'Neuss',
+        'country'  => 'de',
+        'phone'    => '01522113356',
         'email'    => $email,
     ];
 }

@@ -17,7 +17,7 @@ $exampleUrlBase = 'https://your.web.site.example/path/to/example/invoice';
 $gateway = Omnipay::create('Klarna\\Invoice');
 $gateway->setMerchantId($merchantId)
     ->setLanguage('de')
-    ->setCountry('at')
+    ->setCountry('de')
     ->setCurrency('eur')
     ->setTestMode(true);
 $widget = $gateway->getWidget(['AGBUrl' => $exampleUrlBase.'/AGB', 'color' => 'blue-black', 'charge' => '0.95']);
