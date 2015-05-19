@@ -3,7 +3,6 @@
 namespace Omnipay\Klarna;
 
 use Omnipay\Tests\GatewayTestCase;
-
 use Omnipay\Klarna\InvoiceGateway;
 
 class InvoiceGatewayTest extends GatewayTestCase

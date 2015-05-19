@@ -73,5 +73,4 @@ abstract class AbstractInvoiceRequest extends AbstractRequest
         }
         return $articles;
     }
-
 }

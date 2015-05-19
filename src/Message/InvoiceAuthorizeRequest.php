@@ -47,7 +47,7 @@ class InvoiceAuthorizeRequest extends AbstractInvoiceRequest
                     throw new InvalidRequestException('Birthday is a required parameter for AT/DE/NL');
                 }
                 $data['gender'] = strtolower(substr($gender, 0, 1));
-            break;
+                break;
             default:
                 $pno = $card->getSocialSecurityNumber();
                 if (empty($pno)) {

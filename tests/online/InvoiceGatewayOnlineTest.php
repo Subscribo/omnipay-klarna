@@ -6,7 +6,6 @@ use KlarnaFlags;
 use Omnipay\Tests\GatewayTestCase;
 use Omnipay\Klarna\InvoiceGateway;
 
-
 class InvoiceGatewayOnlineTest extends GatewayTestCase
 {
     public function setUp()

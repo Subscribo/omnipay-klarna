@@ -29,15 +29,15 @@ switch ($workflow) {
     case 'approved':
         $email = 'youremail@email.com';
         $denied = false;
-    break;
+        break;
     case 'pending-approved':
         $email = 'pending_accepted@klarna.com';
         $denied = false;
-    break;
+        break;
     case 'pending-denied':
         $email = 'pending_denied@klarna.com';
         $denied = false;
-    break;
+        break;
     case 'denied':
     default:
         $workflow = 'denied';
@@ -111,8 +111,10 @@ try {
     if ($response->isSuccessful()) {
         echo '<h3>Authorization request was resolved</h3>';
         echo "<ul>\n";
-        echo '<li><a href="'.$exampleUrlBase.'/capture?reservation_number='.$reservationNumber.'">Capture whole amount</a></li>';
-        echo '<li><a href="'.$exampleUrlBase.'/capture?reservation_number='.$reservationNumber.'&part=1">Capture part of amount</a></li>';
+        echo '<li><a href="'.$exampleUrlBase.'/capture?reservation_number='.$reservationNumber
+            .'">Capture whole amount</a></li>';
+        echo '<li><a href="'.$exampleUrlBase.'/capture?reservation_number='.$reservationNumber
+            .'&part=1">Capture part of amount</a></li>';
         echo "</ul>\n";
     } else {
         echo '<h3>Authorization request is pending</h3>';

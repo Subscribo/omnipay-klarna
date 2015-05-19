@@ -68,15 +68,18 @@ try {
         echo '<h3>Capture has been approved</h3>';
         if ($partial) {
             echo "<ul>\n";
-            echo '<li><a href="'.$exampleUrlBase.'/capture?reservation_number='.$reservationNumber.'">Capture rest of amount</a></li>';
-            echo '<li><a href="'.$exampleUrlBase.'/capture?reservation_number='.$reservationNumber.'&part=1">Capture another part of amount</a></li>';
+            echo '<li><a href="'.$exampleUrlBase.'/capture?reservation_number='.$reservationNumber
+                .'">Capture rest of amount</a></li>';
+            echo '<li><a href="'.$exampleUrlBase.'/capture?reservation_number='.$reservationNumber
+                .'&part=1">Capture another part of amount</a></li>';
             echo "</ul>\n";
         }
     } else {
         echo '<h3>Capture has not been approved</h3>';
     }
     echo "<ul>\n";
-    echo '<li><a href="'.$exampleUrlBase.'/check?reservation_number='.$reservationNumber.'">Check by reservation number</a></li>';
+    echo '<li><a href="'.$exampleUrlBase.'/check?reservation_number='.$reservationNumber
+        .'">Check by reservation number</a></li>';
     echo '<li><a href="'.$exampleUrlBase.'/check?invoice_number='.$invoiceNumber.'">Check by invoice number</a></li>';
     echo "</ul>\n";
 

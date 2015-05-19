@@ -44,17 +44,21 @@ try {
         echo '<h3>Order has been approved</h3>';
         if ($reservationNumber) {
             echo "<ul>\n";
-            echo '<li><a href="'.$exampleUrlBase.'/capture?reservation_number='.$reservationNumber.'">Capture whole amount</a></li>';
-            echo '<li><a href="'.$exampleUrlBase.'/capture?reservation_number='.$reservationNumber.'&part=1">Capture part of amount</a></li>';
+            echo '<li><a href="'.$exampleUrlBase.'/capture?reservation_number='.$reservationNumber
+                .'">Capture whole amount</a></li>';
+            echo '<li><a href="'.$exampleUrlBase.'/capture?reservation_number='.$reservationNumber
+                .'&part=1">Capture part of amount</a></li>';
             echo "</ul>\n";
         }
     } elseif ($response->isPending()) {
         echo '<h3>Order is still pending</h3>';
         if ($reservationNumber) {
-            echo '<a href="'.$exampleUrlBase.'/check?reservation_number='.$reservationNumber.'">Check again (with reservation number)</a>';
+            echo '<a href="'.$exampleUrlBase.'/check?reservation_number='.$reservationNumber
+                .'">Check again (with reservation number)</a>';
         }
         if ($invoiceNumber) {
-            echo '<a href="'.$exampleUrlBase.'/check?invoice_number='.$invoiceNumber.'">Check again (with invoice number)</a>';
+            echo '<a href="'.$exampleUrlBase.'/check?invoice_number='.$invoiceNumber
+                .'">Check again (with invoice number)</a>';
         }
     } elseif ($response->isDenied()) {
         echo '<h3>Order has been denied</h3>';

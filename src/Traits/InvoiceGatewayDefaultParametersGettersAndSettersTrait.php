@@ -7,5 +7,4 @@ use Omnipay\Klarna\Traits\AbstractGatewayDefaultParametersGettersAndSettersTrait
 trait InvoiceGatewayDefaultParametersGettersAndSettersTrait
 {
     use AbstractGatewayDefaultParametersGettersAndSettersTrait;
-
 }

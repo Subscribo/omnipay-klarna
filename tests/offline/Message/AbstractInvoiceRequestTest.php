@@ -5,7 +5,6 @@ namespace Omnipay\Klarna\Message;
 use Omnipay\Tests\TestCase;
 use Omnipay\Klarna\Message\AbstractInvoiceRequest;
 
-
 class AbstractInvoiceRequestTest extends TestCase
 {
     public function testCreateKlarnaConnector()
@@ -24,8 +23,8 @@ class AbstractInvoiceRequestTest extends TestCase
         $this->assertInstanceOf('\\Klarna', $connector);
         $this->assertSame('192.0.2.1', $connector->getClientIP());
     }
-
 }
+
 
 class ExtendedAbstractInvoiceRequestForTesting extends AbstractInvoiceRequest
 {
@@ -50,4 +49,3 @@ class ExtendedAbstractInvoiceRequestForTesting extends AbstractInvoiceRequest
         return parent::createKlarnaConnector($data);
     }
 }
-
