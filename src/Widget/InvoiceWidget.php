@@ -412,6 +412,15 @@ class InvoiceWidget extends AbstractWidget
     }
 
     /**
+     * @param string $value
+     * @return $this
+     */
+    public function setLanguage($value)
+    {
+        return $this->setParameter('language', $value);
+    }
+
+    /**
      * @return string|null
      */
     public function getColor()
@@ -427,20 +436,11 @@ class InvoiceWidget extends AbstractWidget
     {
         return $this->setParameter('color', $value);
     }
-    /**
-     * @param string $value
-     * @return $this
-     */
-    public function setLanguage($value)
-    {
-        return $this->setParameter('language', $value);
-    }
 
     /**
-     * @param $value
      * @return string|int|null
      */
-    public function getMerchantId($value)
+    public function getMerchantId()
     {
         return $this->getParameter('merchantId');
     }
