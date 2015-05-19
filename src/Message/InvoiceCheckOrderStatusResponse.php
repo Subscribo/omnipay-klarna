@@ -17,20 +17,30 @@ class InvoiceCheckOrderStatusResponse extends AbstractInvoiceResponse
         return $this->isAccepted();
     }
 
+
+    public function isWaiting()
+    {
+        return $this->isPending();
+    }
+
+
     public function isAccepted()
     {
         return (strval(KlarnaFlags::ACCEPTED) === strval($this->getOrderStatus()));
     }
+
 
     public function isPending()
     {
         return (strval(KlarnaFlags::PENDING) === strval($this->getOrderStatus()));
     }
 
+
     public function isDenied()
     {
         return (strval(KlarnaFlags::DENIED) === strval($this->getOrderStatus()));
     }
+
 
     public function getOrderStatus()
     {

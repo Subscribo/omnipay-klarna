@@ -162,6 +162,7 @@ class InvoiceAuthorizeRequest extends AbstractInvoiceRequest
         $country = strtoupper($isShipping ? $card->getShippingCountry() : $card->getCountry());
         $address1 = $isShipping ? $card->getShippingAddress1() : $card->getAddress1();
         $address2 = $isShipping ? $card->getShippingAddress2() : $card->getAddress2();
+        $company = $isShipping ? $card->getShippingCompany() : $card->getBillingCompany();
 
         $careof = '';
         $street = $address1;
@@ -192,6 +193,10 @@ class InvoiceAuthorizeRequest extends AbstractInvoiceRequest
             $houseNo,
             $houseExt
         );
+        if ($company) {
+            $result->setCompanyName($company);
+            $result->isCompany = true;
+        }
         return $result;
     }
 }

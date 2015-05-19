@@ -17,9 +17,22 @@ class InvoiceAuthorizeResponse extends AbstractInvoiceResponse
         return $this->isResolved();
     }
 
+
+    public function isWaiting()
+    {
+        return $this->isPending();
+    }
+
+
     public function isResolved()
     {
         return (strval(KlarnaFlags::ACCEPTED) === strval($this->getInvoiceStatus()));
+    }
+
+
+    public function isPending()
+    {
+        return (strval(KlarnaFlags::PENDING) === strval($this->getInvoiceStatus()));
     }
 
 
