@@ -14,12 +14,14 @@ class AbstractGatewayTest extends GatewayTestCase
         $this->gateway->setTestMode(true);
     }
 
+
     public function testPurchaseParameters()
     {
         if ($this->gateway->supportsPurchase()) {
             parent::testPurchaseParameters();
         }
     }
+
 
     public function testSetLocale()
     {

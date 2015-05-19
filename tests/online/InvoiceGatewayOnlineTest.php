@@ -84,29 +84,61 @@ class InvoiceGatewayOnlineTest extends GatewayTestCase
         ];
     }
 
-    public function testAuthorize()
-    {
-        $data = [
-            'card' => $this->card,
-        ];
-        $request = $this->gateway->authorize($data);
-        $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceAuthorizeRequest', $request);
-        $request->setItems($this->shoppingCart);
 
-        if (empty($this->sharedSecret)) {
-            $this->markTestSkipped('API credentials not provided, online test skipped.');
+    public function testAuthorizeAccepted()
+    {
+        try {
+            $data = [
+                'card' => $this->card,
+            ];
+            $request = $this->gateway->authorize($data);
+            $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceAuthorizeRequest', $request);
+            $request->setItems($this->shoppingCart);
+
+            if (empty($this->sharedSecret)) {
+                $this->markTestSkipped('API credentials not provided, online test skipped.');
+            }
+            $response = $request->send();
+
+            $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceAuthorizeResponse', $response);
+            $this->assertTrue($response->isSuccessful());
+            $this->assertTrue($response->isResolved());
+            $this->assertFalse($response->isPending());
+            $this->assertFalse($response->isWaiting());
+            $reservationNumber = $response->getReservationNumber();
+            $this->assertNotEmpty($reservationNumber);
+
+            return $reservationNumber;
+        } catch (\KlarnaException $e) {
+            $this->assertSame(9120, $e->getCode());
+            $this->markTestSkipped('API credentials provided does not allow testing for this country.');
         }
+    }
+
+    /**
+     * @depends testAuthorizeAccepted
+     */
+    public function testCheckOrderStatusAccepted($reservationNumber)
+    {
+        $this->assertNotEmpty($reservationNumber);
+        $data = ['reservationNumber' => $reservationNumber];
+        $request = $this->gateway->checkOrderStatus($data);
+        $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCheckOrderStatusRequest', $request);
+
         $response = $request->send();
 
-        $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceAuthorizeResponse', $response);
+        $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCheckOrderStatusResponse', $response);
         $this->assertTrue($response->isSuccessful());
-        $reservationNumber = $response->getReservationNumber();
-        $this->assertNotEmpty($reservationNumber);
+        $this->assertTrue($response->isAccepted());
+        $this->assertFalse($response->isDenied());
+        $this->assertFalse($response->isPending());
+        $this->assertFalse($response->isWaiting());
+        $this->assertNotEmpty($response->getOrderStatus());
         return $reservationNumber;
     }
 
     /**
-     * @depends testAuthorize
+     * @depends testCheckOrderStatusAccepted
      */
     public function testPartialCapture($reservationNumber)
     {
@@ -124,6 +156,7 @@ class InvoiceGatewayOnlineTest extends GatewayTestCase
             ]
         ]);
         $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCaptureRequest', $request);
+
         $response = $request->send();
 
         $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCaptureResponse', $response);
@@ -132,7 +165,6 @@ class InvoiceGatewayOnlineTest extends GatewayTestCase
         $this->assertSame($response->getTransactionReference(), $response->getInvoiceNumber());
 
         $response2 = $request->send();
-
 
         $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCaptureResponse', $response2);
         $this->assertTrue($response2->isSuccessful());
@@ -152,12 +184,53 @@ class InvoiceGatewayOnlineTest extends GatewayTestCase
         $data = ['reservationNumber' => $reservationNumber];
         $request = $this->gateway->capture($data);
         $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCaptureRequest', $request);
+
         $response = $request->send();
 
         $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCaptureResponse', $response);
         $this->assertTrue($response->isSuccessful());
-        $this->assertNotEmpty($response->getTransactionReference());
-        $this->assertSame($response->getTransactionReference(), $response->getInvoiceNumber());
+        $invoiceNumber = $response->getInvoiceNumber();
+        $this->assertNotEmpty($invoiceNumber);
+        $this->assertSame($invoiceNumber, $response->getTransactionReference());
+        return [$reservationNumber, $invoiceNumber];
+    }
+
+    /**
+     * @depends testFinalCapture
+     */
+    public function testCheckOrderStatusAfterCaptureByInvoiceNumber(array $numbers)
+    {
+        list($reservationNumber, $invoiceNumber) = $numbers;
+        $this->assertNotEmpty($reservationNumber);
+        $this->assertNotEmpty($invoiceNumber);
+        $data = ['invoiceNumber' => $invoiceNumber];
+        $request = $this->gateway->checkOrderStatus($data);
+        $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCheckOrderStatusRequest', $request);
+
+        $response = $request->send();
+
+        $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCheckOrderStatusResponse', $response);
+        $this->assertTrue($response->isSuccessful());
+        $this->assertTrue($response->isAccepted());
+        $this->assertFalse($response->isDenied());
+        $this->assertFalse($response->isPending());
+        $this->assertFalse($response->isWaiting());
+        $this->assertNotEmpty($response->getOrderStatus());
+        return $reservationNumber;
+    }
+
+    /**
+     * @depends testCheckOrderStatusAfterCaptureByInvoiceNumber
+     * @expectedException \KlarnaException
+     */
+    public function testCheckOrderStatusAfterCaptureByReservationNumber($reservationNumber)
+    {
+        $this->assertNotEmpty($reservationNumber);
+        $data = ['reservationNumber' => $reservationNumber];
+        $request = $this->gateway->checkOrderStatus($data);
+        $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCheckOrderStatusRequest', $request);
+
+        $response = $request->send();
     }
 
     /**
@@ -175,18 +248,169 @@ class InvoiceGatewayOnlineTest extends GatewayTestCase
         if (empty($this->sharedSecret)) {
             $this->markTestSkipped('API credentials not provided, online test skipped.');
         }
+
         $response = $request->send();
+
         $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceAuthorizeResponse', $response);
         $this->assertTrue($response->isSuccessful());
+        $this->assertTrue($response->isResolved());
         $reservationNumber = $response->getReservationNumber();
         $this->assertNotEmpty($reservationNumber);
+
         $data2 = ['reservationNumber' => $reservationNumber];
         $request2 = $this->gateway->capture($data2);
         $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCaptureRequest', $request2);
+
         $response2 = $request2->send();
     }
 
 
+    public function testAuthorizePending()
+    {
+        try {
+            $data = [
+                'card' => $this->card,
+            ];
+            $data['card']['email'] = 'pending_accepted@klarna.com';
+            $data['card']['address1'] = 'Klarna-Straße';
+            $data['card']['address2'] = '1/2/3';
+            $request = $this->gateway->authorize($data);
+            $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceAuthorizeRequest', $request);
+            $request->setItems($this->shoppingCart);
+
+            if (empty($this->sharedSecret)) {
+                $this->markTestSkipped('API credentials not provided, online test skipped.');
+            }
+            $response = $request->send();
+
+            $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceAuthorizeResponse', $response);
+            $this->assertFalse($response->isSuccessful());
+            $this->assertFalse($response->isResolved());
+            $this->assertTrue($response->isPending());
+            $this->assertTrue($response->isWaiting());
+            $reservationNumber = $response->getReservationNumber();
+            $this->assertNotEmpty($reservationNumber);
+
+            return $reservationNumber;
+        } catch (\KlarnaException $e) {
+            $this->assertSame(9120, $e->getCode());
+            $this->markTestSkipped('API credentials provided does not allow testing for this country.');
+        }
+    }
+
+    /**
+     * @depends testAuthorizePending
+     */
+    public function testCheckOrderStatusPending($reservationNumber)
+    {
+        $this->assertNotEmpty($reservationNumber);
+        $data = ['reservationNumber' => $reservationNumber];
+        $request = $this->gateway->checkOrderStatus($data);
+        $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCheckOrderStatusRequest', $request);
+        $response = $request->send();
+
+        $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCheckOrderStatusResponse', $response);
+        $this->assertFalse($response->isSuccessful());
+        $this->assertFalse($response->isAccepted());
+        $this->assertFalse($response->isDenied());
+        $this->assertTrue($response->isPending());
+        $this->assertTrue($response->isWaiting());
+        $this->assertNotEmpty($response->getOrderStatus());
+        return $reservationNumber;
+    }
+
+
+    public function testAuthorizeAcceptedForSwedishCompany()
+    {
+        try {
+            $this->gateway->setLocale('sv_se');
+            $card = [
+                'firstName' => 'Testperson-se',
+                'lastName' => 'Approved',
+                'company' => 'Testcompany-se',
+                'billingAddress1' => 'Stårgatan 1',
+                'billingAddress2' => null,
+                'billingPostCode' => '12345',
+                'city'     => 'Ankeborg',
+                'country'  => 'se',
+                'shippingAddress1' => 'Lillegatan',
+                'shippingAddress2' => 1,
+                'shippingPostCode' => '12334',
+                'phone'    => '0765260000',
+                'email'    => 'youremail@email.com',
+                'socialSecurityNumber' => '002031-0132'
+            ];
+            $data = ['card' => $card];
+
+            $request = $this->gateway->authorize($data);
+            $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceAuthorizeRequest', $request);
+            $request->setItems($this->shoppingCart);
+
+            if (empty($this->sharedSecret)) {
+                $this->markTestSkipped('API credentials not provided, online test skipped.');
+            }
+            $response = $request->send();
+
+            $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceAuthorizeResponse', $response);
+            $this->assertTrue($response->isSuccessful());
+            $this->assertTrue($response->isResolved());
+            $this->assertFalse($response->isPending());
+            $this->assertFalse($response->isWaiting());
+            $reservationNumber = $response->getReservationNumber();
+            $this->assertNotEmpty($reservationNumber);
+
+            return $reservationNumber;
+        } catch (\KlarnaException $e) {
+            $this->assertSame(9120, $e->getCode());
+            $this->markTestSkipped('API credentials provided does not allow testing for this country.');
+        }
+    }
+
+
+    /**
+     * @depends testAuthorizeAcceptedForSwedishCompany
+     */
+    public function testCheckOrderStatusAcceptedForSwedishCompany($reservationNumber)
+    {
+        return $this->testCheckOrderStatusAccepted($reservationNumber);
+    }
+
+    /**
+     * @depends testCheckOrderStatusAcceptedForSwedishCompany
+     */
+    public function testPartialCaptureForSwedishCompany($reservationNumber)
+    {
+        return $this->testPartialCapture($reservationNumber);
+    }
+
+    /**
+     * @depends testPartialCaptureForSwedishCompany
+     */
+    public function testFinalCaptureForSwedishCompany($reservationNumber)
+    {
+        return $this->testFinalCapture($reservationNumber);
+    }
+
+    /**
+     * @depends testFinalCaptureForSwedishCompany
+     */
+    public function testCheckOrderStatusAfterCaptureByInvoiceNumberForSwedishCompany(array $numbers)
+    {
+        return $this->testCheckOrderStatusAfterCaptureByInvoiceNumber($numbers);
+    }
+
+    /**
+     * @depends testCheckOrderStatusAfterCaptureByInvoiceNumberForSwedishCompany
+     * @expectedException \KlarnaException
+     */
+    public function testCheckOrderStatusAfterCaptureByReservationNumberForSwedishCompany($reservationNumber)
+    {
+        return $this->testCheckOrderStatusAfterCaptureByReservationNumber($reservationNumber);
+    }
+
+    /**
+     * Fix for testPurchaseParameters from parent class
+     */
     public function testPurchaseParameters()
     {
         if ($this->gateway->supportsPurchase()) {
