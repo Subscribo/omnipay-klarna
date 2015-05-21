@@ -32,7 +32,7 @@ abstract class AbstractInvoiceRequest extends AbstractRequest
         $country = KlarnaCountry::fromCode($data['country']);
         $language = KlarnaLanguage::fromCode($data['language']);
         $currency = KlarnaCurrency::fromCode($data['currency']);
-        $mode = $data['testMode'] ? Klarna::BETA : Klarna::LIVE;
+        $mode = empty($data['testMode']) ? Klarna::LIVE : Klarna::BETA;
         $klarnaConnector->config(
             $data['merchantId'],
             $data['sharedSecret'],
