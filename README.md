@@ -22,11 +22,11 @@ Stable version has not yet been released.
 Omnipay Klarna driver is installed via [Composer](http://getcomposer.org/). To install, add it
 to your `composer.json` file (you might need to add also development version of egeloen/http-adapter).
 
-For alpha version use:
+For beta version use:
 ```json
 {
     "require": {
-        "subscribo/omnipay-klarna": "^0.1.0@alpha",
+        "subscribo/omnipay-klarna": "^0.1.1@beta",
         "egeloen/http-adapter": "^0.8@dev"
     }
 }
@@ -36,7 +36,7 @@ For development version use:
 ```json
 {
     "require": {
-        "subscribo/omnipay-klarna": "^0.1.0@dev",
+        "subscribo/omnipay-klarna": "^0.1.1@dev",
         "egeloen/http-adapter": "^0.8@dev"
     }
 }
@@ -55,35 +55,43 @@ These are also needed for examples, provided in docs/example/invoice (they are u
 
 The following gateways are provided by this package:
 
-* Klarna\Invoice
+* `Klarna\Invoice`
 
 Gateways in this package have following required options:
 
-* merchantId
-* sharedSecret
+* `merchantId`
+* `sharedSecret`
 
 To get those please contact your Klarna representative.
 
 Additionally these options could be specified:
 
-* testMode
-* country
-* language
-* currency
+* `testMode`
+* `country`
+* `language`
+* `currency`
 
-You can set up country, language and currency (for supported countries) at once using setLocale() method
+You can set up country, language and currency (for supported countries) at once using `setLocale()` method
 
-For meaning of testMode see general [Omnipay documentation](https://thephpleague.com/omnipay)
+For meaning of `testMode` see general [Omnipay documentation](https://thephpleague.com/omnipay)
 
-### Usage of gateway Klarna\Invoice
+### Usage of gateway `Klarna\Invoice`
 
-Gateway Klarna\Checkout supports these request-sending methods:
+Gateway `Klarna\Invoice` supports these request-sending methods:
 
-* authorize()
-* capture()
-* checkOrderStatus()
+* `authorize()`
+* `capture()`
+* `checkOrderStatus()`
 
 For use and expected parameters see unit tests and example code
+
+### OrderIds
+
+You can set up two custom reference identifiers on each invoice - `orderId1` and `orderId2`
+For `InvoiceAuthorizeRequest` and `InvoiceCaptureRequest` parameter `transactionId` is an alias for `orderId1`
+
+You can search for unique orderId (whether orderId1 or orderId2) setting parameter `orderId` in `InvoiceCheckOrderStatusRequest`.
+In `InvoiceCheckOrderStatusRequest` is `transactionId` alias for `orderId`.
 
 ### Example code
 
@@ -96,16 +104,16 @@ For example code see:
 
 ### InvoiceWidget
 
-Both InvoiceGateway and InvoiceAuthorizeRequest have method getWidget(), which is returning InvoiceWidget, with (among others) following methods
+Both `InvoiceGateway` and `InvoiceAuthorizeRequest` have method `getWidget()`, which is returning `InvoiceWidget`, with (among others) following methods
 
-* isRenderable()
-* render()
-* renderPaymentMethodWidget()
-* renderLogoUrl()
-* renderTooltip()
-* renderTermsInvoiceHtml()
-* renderTermsConsentHtml()
-* renderTermsAccountHtml()
+* `isRenderable()`
+* `render()`
+* `renderPaymentMethodWidget()`
+* `renderLogoUrl()`
+* `renderTooltip()`
+* `renderTermsInvoiceHtml()`
+* `renderTermsConsentHtml()`
+* `renderTermsAccountHtml()`
 
 For use and expected parameters see example code
 
@@ -123,12 +131,9 @@ For testing you need to install development dependencies:
     composer update
 ```
 
-If you want to run both online and offline tests, run just phpunit.
+If you want to run both online and offline tests, run just `phpunit`.
 
-If you want to run offline (not requiring internet connection) tests only, run:
-```sh
-    phpunit tests/offline
-```
+If you want to run offline (not requiring internet connection) tests only, run `phpunit tests/offline`
 
 If you want to run online tests, you also need to set environment variables KLARNA_MERCHANT_ID and KLARNA_SHARED_SECRET with your Klarna API test credentials.
 
@@ -152,5 +157,6 @@ or better yet, fork the library and submit a pull request.
 
 ### Links
 
+* Klarna developers documentation: https://developers.klarna.com
 * Omnipay Library web page: http://omnipay.thephpleague.com
 * Omnipay Library Github Project: https://github.com/thephpleague/omnipay

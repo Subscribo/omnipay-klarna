@@ -2,6 +2,11 @@
 
 namespace Omnipay\Klarna\Traits;
 
+/**
+ * Trait AbstractGatewayDefaultParametersGettersAndSettersTrait
+ *
+ * @package Omnipay\Klarna
+ */
 trait AbstractGatewayDefaultParametersGettersAndSettersTrait
 {
     /**

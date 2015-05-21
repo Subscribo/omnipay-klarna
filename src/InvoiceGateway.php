@@ -6,6 +6,11 @@ use Omnipay\Klarna\AbstractGateway;
 use Omnipay\Klarna\Traits\InvoiceGatewayDefaultParametersGettersAndSettersTrait;
 use Omnipay\Klarna\Widget\InvoiceWidget;
 
+/**
+ * Class InvoiceGateway
+ *
+ * @package Omnipay\Klarna
+ */
 class InvoiceGateway extends AbstractGateway
 {
     use InvoiceGatewayDefaultParametersGettersAndSettersTrait;

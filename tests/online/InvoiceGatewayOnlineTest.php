@@ -205,11 +205,7 @@ class InvoiceGatewayOnlineTest extends GatewayTestCase
     public function testPartialCapture(array $numbers)
     {
         list($reservationNumber, $orderId1, $orderId2) = $numbers;
-
-        $this->assertNotEmpty($reservationNumber);
-        $data = ['reservationNumber' => $reservationNumber];
-        $request = $this->gateway->capture($data);
-        $request->setItems([
+        $items = [
             [
                 'identifier' => 'A001',
                 'quantity' => 2,
@@ -218,8 +214,13 @@ class InvoiceGatewayOnlineTest extends GatewayTestCase
                 'identifier' => 'SHIPPING',
                 'quantity' => 1,
             ]
-        ]);
+        ];
+
+        $this->assertNotEmpty($reservationNumber);
+        $data = ['reservationNumber' => $reservationNumber];
+        $request = $this->gateway->capture($data);
         $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCaptureRequest', $request);
+        $this->assertSame($request, $request->setItems($items));
 
         $response = $request->send();
 
@@ -228,7 +229,18 @@ class InvoiceGatewayOnlineTest extends GatewayTestCase
         $this->assertNotEmpty($response->getTransactionReference());
         $this->assertSame($response->getTransactionReference(), $response->getInvoiceNumber());
 
-        $response2 = $request->send();
+        $orderId2A = '  may contain spaces  '.uniqid().'   ';
+        $numbers[] = $orderId2A;
+        $data2 = [
+            'reservationNumber' => $reservationNumber,
+            'orderId1'          => '-', // With current API version it is not possible to unset orderId
+            'orderId2'          => $orderId2A,
+            'items'             => $items,
+        ];
+        $request2 = $this->gateway->capture($data2);
+        $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCaptureRequest', $request2);
+
+        $response2 = $request2->send();
 
         $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCaptureResponse', $response2);
         $this->assertTrue($response2->isSuccessful());
@@ -244,12 +256,13 @@ class InvoiceGatewayOnlineTest extends GatewayTestCase
      */
     public function testFinalCapture(array $numbers)
     {
-        list($reservationNumber, $orderId1, $orderId2) = $numbers;
-
+        list($reservationNumber, $orderId1, $orderId2, $orderId2A) = $numbers;
+        $orderId2B = uniqid();
         $this->assertNotEmpty($reservationNumber);
-        $data = ['reservationNumber' => $reservationNumber];
-        $request = $this->gateway->capture($data);
+        $request = $this->gateway->capture();
         $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCaptureRequest', $request);
+        $this->assertSame($request, $request->setReservationNumber($reservationNumber));
+        $this->assertSame($request, $request->setOrderId2($orderId2B));
 
         $response = $request->send();
 
@@ -258,7 +271,7 @@ class InvoiceGatewayOnlineTest extends GatewayTestCase
         $invoiceNumber = $response->getInvoiceNumber();
         $this->assertNotEmpty($invoiceNumber);
         $this->assertSame($invoiceNumber, $response->getTransactionReference());
-        return [$reservationNumber, $invoiceNumber, $orderId1, $orderId2];
+        return [$reservationNumber, $invoiceNumber, $orderId1, $orderId2, $orderId2A, $orderId2B];
     }
 
     /**
@@ -266,7 +279,7 @@ class InvoiceGatewayOnlineTest extends GatewayTestCase
      */
     public function testCheckOrderStatusAfterCaptureByInvoiceNumber(array $numbers)
     {
-        list($reservationNumber, $invoiceNumber, $orderId1, $orderId2) = $numbers;
+        list($reservationNumber, $invoiceNumber, $orderId1, $orderId2, $orderId2A, $orderId2B) = $numbers;
         $this->assertNotEmpty($reservationNumber);
         $this->assertNotEmpty($invoiceNumber);
         $data = ['invoiceNumber' => $invoiceNumber];
@@ -282,6 +295,49 @@ class InvoiceGatewayOnlineTest extends GatewayTestCase
         $this->assertFalse($response->isPending());
         $this->assertFalse($response->isWaiting());
         $this->assertNotEmpty($response->getOrderStatus());
+
+        $data2 = ['orderId' => $orderId2];
+        $request2 = $this->gateway->checkOrderStatus($data2);
+        $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCheckOrderStatusRequest', $request2);
+
+        $response2 = $request2->send();
+
+        $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCheckOrderStatusResponse', $response2);
+        $this->assertTrue($response2->isSuccessful());
+        $this->assertTrue($response2->isAccepted());
+        $this->assertFalse($response2->isDenied());
+        $this->assertFalse($response2->isPending());
+        $this->assertFalse($response2->isWaiting());
+        $this->assertNotEmpty($response2->getOrderStatus());
+
+        $data3 = ['orderId' => $orderId2A];
+        $request3 = $this->gateway->checkOrderStatus($data3);
+        $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCheckOrderStatusRequest', $request3);
+
+        $response3 = $request3->send();
+
+        $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCheckOrderStatusResponse', $response3);
+        $this->assertTrue($response3->isSuccessful());
+        $this->assertTrue($response3->isAccepted());
+        $this->assertFalse($response3->isDenied());
+        $this->assertFalse($response3->isPending());
+        $this->assertFalse($response3->isWaiting());
+        $this->assertNotEmpty($response3->getOrderStatus());
+
+        $data4 = ['orderId' => $orderId2B];
+        $request4 = $this->gateway->checkOrderStatus($data4);
+        $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCheckOrderStatusRequest', $request4);
+
+        $response4 = $request4->send();
+
+        $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceCheckOrderStatusResponse', $response4);
+        $this->assertTrue($response4->isSuccessful());
+        $this->assertTrue($response4->isAccepted());
+        $this->assertFalse($response4->isDenied());
+        $this->assertFalse($response4->isPending());
+        $this->assertFalse($response4->isWaiting());
+        $this->assertNotEmpty($response4->getOrderStatus());
+
 
         return $reservationNumber;
     }
@@ -487,6 +543,9 @@ class InvoiceGatewayOnlineTest extends GatewayTestCase
      */
     public function testExceptionForSendingIncompleteDataWithInvoiceCheckOrderStatusRequest()
     {
+        if (empty($this->sharedSecret)) {
+            $this->markTestSkipped('API credentials not provided, online test skipped.');
+        }
         $request = new InvoiceCheckOrderStatusRequest($this->getHttpClient(), $this->getHttpRequest());
         $data = [
             'testMode' => true,

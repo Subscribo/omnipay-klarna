@@ -7,6 +7,7 @@ use KlarnaFlags;
 use Omnipay\Klarna\Message\AbstractInvoiceRequest;
 use Omnipay\Klarna\Message\InvoiceCaptureResponse;
 use Omnipay\Klarna\Traits\InvoiceGatewayDefaultParametersGettersAndSettersTrait;
+use Omnipay\Klarna\Traits\OrderIdOneAndTwoGettersAndSettersTrait;
 
 /**
  * Class InvoiceCaptureRequest
@@ -18,6 +19,7 @@ use Omnipay\Klarna\Traits\InvoiceGatewayDefaultParametersGettersAndSettersTrait;
 class InvoiceCaptureRequest extends AbstractInvoiceRequest
 {
     use InvoiceGatewayDefaultParametersGettersAndSettersTrait;
+    use OrderIdOneAndTwoGettersAndSettersTrait;
 
     /**
      * @return string|int
@@ -96,6 +98,12 @@ class InvoiceCaptureRequest extends AbstractInvoiceRequest
         $rno = $data['reservationNumber'];
         $ocr = array_key_exists('OCRNumber', $data) ? $data['OCRNumber'] : null;
         $flags = array_key_exists('flags', $data) ? $data['flags'] : null;
+        if (isset($data['orderId1'])) {
+            $k->setActivateInfo('orderid1', strval($data['orderId1']));
+        }
+        if (isset($data['orderId2'])) {
+            $k->setActivateInfo('orderid2', strval($data['orderId2']));
+        }
         $result = $k->activate($rno, $ocr, $flags);
         $this->response = $this->createResponse($result);
 

@@ -11,6 +11,7 @@ use KlarnaLanguage;
 use Omnipay\Klarna\Message\AbstractInvoiceRequest;
 use Omnipay\Klarna\Message\InvoiceAuthorizeResponse;
 use Omnipay\Klarna\Traits\InvoiceGatewayDefaultParametersGettersAndSettersTrait;
+use Omnipay\Klarna\Traits\OrderIdOneAndTwoGettersAndSettersTrait;
 use Omnipay\Klarna\Widget\InvoiceWidget;
 use Omnipay\Common\Exception\InvalidRequestException;
 use Subscribo\Omnipay\Shared\CreditCard;
@@ -26,61 +27,7 @@ use Subscribo\Omnipay\Shared\Helpers\AddressParser;
 class InvoiceAuthorizeRequest extends AbstractInvoiceRequest
 {
     use InvoiceGatewayDefaultParametersGettersAndSettersTrait;
-
-    /**
-     * Parameter transactionId for Klarna: InvoiceAuthorizeRequest is alias for parameter orderId1
-     *
-     * @return string|null
-     */
-    public function getTransactionId()
-    {
-        return $this->getOrderId1();
-    }
-
-    /**
-     * Parameter transactionId for Klarna: InvoiceAuthorizeRequest is alias for parameter orderId1
-     *
-     * @param string|null $value
-     * @return $this
-     */
-    public function setTransactionId($value)
-    {
-        return $this->setOrderId1($value);
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getOrderId1()
-    {
-        return $this->getParameter('orderId1');
-    }
-
-    /**
-     * @param string $value
-     * @return $this
-     */
-    public function setOrderId1($value)
-    {
-        return $this->setParameter('orderId1', $value);
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getOrderId2()
-    {
-        return $this->getParameter('orderId2');
-    }
-
-    /**
-     * @param string $value
-     * @return $this
-     */
-    public function setOrderId2($value)
-    {
-        return $this->setParameter('orderId2', $value);
-    }
+    use OrderIdOneAndTwoGettersAndSettersTrait;
 
     public function getData()
     {

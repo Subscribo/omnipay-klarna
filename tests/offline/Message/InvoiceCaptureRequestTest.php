@@ -86,6 +86,22 @@ class InvoiceCaptureRequestTest extends TestCase
         $this->assertSame($sharedSecret, $request->getSharedSecret());
         $this->assertSame($request, $request->setSharedSecret(null));
         $this->assertNull($request->getSharedSecret());
+
+        $orderId1 = uniqid();
+        $orderId2 = uniqid().'second';
+
+        $this->assertSame($request, $request->setOrderId1($orderId1));
+        $this->assertSame($request, $request->setOrderId2($orderId2));
+        $this->assertSame($orderId1, $request->getOrderId1());
+        $this->assertSame($orderId2, $request->getOrderId2());
+        $this->assertSame($orderId1, $request->getTransactionId());
+
+        $transactionId = uniqid().'transaction';
+
+        $this->assertSame($request, $request->setTransactionId($transactionId));
+        $this->assertSame($transactionId, $request->getOrderId1());
+        $this->assertSame($orderId2, $request->getOrderId2());
+        $this->assertSame($transactionId, $request->getTransactionId());
     }
 
 
@@ -117,6 +133,9 @@ class InvoiceCaptureRequestTest extends TestCase
         $this->assertNull($request->getTransactionId());
         $this->assertNull($request->getFlags());
         $this->assertNull($request->getOCRNumber());
+        $this->assertNull($request->getOrderId1());
+        $this->assertNull($request->getOrderId2());
+        $this->assertNull($request->getTransactionId());
 
         foreach($params as $key => $value) {
             $this->assertSame($value, $data[$key]);
