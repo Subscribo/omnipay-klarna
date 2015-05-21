@@ -35,6 +35,10 @@ class InvoiceAuthorizeResponse extends AbstractInvoiceResponse
         return (strval(KlarnaFlags::PENDING) === strval($this->getInvoiceStatus()));
     }
 
+    public function isDenied()
+    {
+        return (strval(KlarnaFlags::DENIED) === strval($this->getInvoiceStatus()));
+    }
 
     public function getInvoiceStatus()
     {

@@ -7,6 +7,12 @@ use Omnipay\Klarna\Message\InvoiceCheckOrderStatusRequest;
 
 class InvoiceCheckOrderStatusRequestTest extends TestCase
 {
+    public function setUp()
+    {
+        $this->merchantId = uniqid();
+        $this->sharedSecret = uniqid();
+    }
+
     public function testEmptyRequest()
     {
         $request = new InvoiceCheckOrderStatusRequest($this->getHttpClient(), $this->getHttpRequest());
@@ -36,16 +42,60 @@ class InvoiceCheckOrderStatusRequestTest extends TestCase
 
     /**
      * @expectedException \Omnipay\Common\Exception\InvalidRequestException
+     * @expectedExceptionMessage The merchantId parameter is required
+     */
+    public function testGetDataEmpty()
+    {
+        $request = new InvoiceAuthorizeRequest($this->getHttpClient(), $this->getHttpRequest());
+        $request->setTestMode(true);
+        $data = $request->getData();
+    }
+
+    /**
+     * @expectedException \Omnipay\Common\Exception\InvalidRequestException
      * @expectedExceptionMessage One of parameters
      */
     public function testIncompleteRequestException()
     {
         $request = new InvoiceCheckOrderStatusRequest($this->getHttpClient(), $this->getHttpRequest());
         $request->setTestMode(true);
-        $request->setMerchantId(uniqid());
-        $request->setSharedSecret(uniqid());
+        $request->setMerchantId($this->merchantId);
+        $request->setSharedSecret($this->sharedSecret);
         $request->setLocale('de_at');
         $data = $request->getData();
+    }
+
+
+    public function testGetData()
+    {
+        $transactionId = uniqid();
+        $request = new InvoiceCheckOrderStatusRequest($this->getHttpClient(), $this->getHttpRequest());
+        $params = [
+            'testMode' => true,
+            'country' => 'AT',
+            'language' => 'de',
+            'currency' => 'EUR',
+            'merchantId' => $this->merchantId,
+            'sharedSecret' => $this->sharedSecret,
+            'transactionId' => $transactionId,
+        ];
+        $this->assertSame($request, $request->initialize($params));
+        $data = $request->getData();
+
+        $this->assertTrue($request->getTestMode());
+        $this->assertSame('de', $request->getLanguage());
+        $this->assertSame('AT', $request->getCountry());
+        $this->assertSame('EUR', $request->getCurrency());
+        $this->assertSame($this->merchantId, $request->getMerchantId());
+        $this->assertSame($this->sharedSecret, $request->getSharedSecret());
+        $this->assertNull($request->getReservationNumber());
+        $this->assertNull($request->getInvoiceNumber());
+        $this->assertNull($request->getOrderId());
+        $this->assertSame($transactionId, $request->getTransactionId());
+
+        foreach($params as $key => $value) {
+            $this->assertSame($value, $data[$key]);
+        }
     }
 
 
@@ -100,17 +150,15 @@ class InvoiceCheckOrderStatusRequestTest extends TestCase
         $this->assertSame($request, $request->setCurrency('sek'));
         $this->assertSame('SEK', $request->getCurrency());
 
-        $merchantId = uniqid();
         $this->assertNull($request->getMerchantId());
-        $this->assertSame($request, $request->setMerchantId($merchantId));
-        $this->assertSame($merchantId, $request->getMerchantId());
+        $this->assertSame($request, $request->setMerchantId($this->merchantId));
+        $this->assertSame($this->merchantId, $request->getMerchantId());
         $this->assertSame($request, $request->setMerchantId(null));
         $this->assertNull($request->getMerchantId());
 
-        $sharedSecret = uniqid();
         $this->assertNull($request->getSharedSecret());
-        $this->assertSame($request, $request->setSharedSecret($sharedSecret));
-        $this->assertSame($sharedSecret, $request->getSharedSecret());
+        $this->assertSame($request, $request->setSharedSecret($this->sharedSecret));
+        $this->assertSame($this->sharedSecret, $request->getSharedSecret());
         $this->assertSame($request, $request->setSharedSecret(null));
         $this->assertNull($request->getSharedSecret());
     }

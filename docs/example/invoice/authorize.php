@@ -78,6 +78,8 @@ if ($denied) {
 }
 $data = [
     'card' => $card,
+    'transactionId' => 'Some optional identifier for transaction defined by you', //alias for orderId1
+    'orderId2' => 'Another optional identifier for transaction'
 ];
 $shoppingCart = [
     [

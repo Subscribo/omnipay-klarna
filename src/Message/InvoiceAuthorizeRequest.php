@@ -27,6 +27,61 @@ class InvoiceAuthorizeRequest extends AbstractInvoiceRequest
 {
     use InvoiceGatewayDefaultParametersGettersAndSettersTrait;
 
+    /**
+     * Parameter transactionId for Klarna: InvoiceAuthorizeRequest is alias for parameter orderId1
+     *
+     * @return string|null
+     */
+    public function getTransactionId()
+    {
+        return $this->getOrderId1();
+    }
+
+    /**
+     * Parameter transactionId for Klarna: InvoiceAuthorizeRequest is alias for parameter orderId1
+     *
+     * @param string|null $value
+     * @return $this
+     */
+    public function setTransactionId($value)
+    {
+        return $this->setOrderId1($value);
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getOrderId1()
+    {
+        return $this->getParameter('orderId1');
+    }
+
+    /**
+     * @param string $value
+     * @return $this
+     */
+    public function setOrderId1($value)
+    {
+        return $this->setParameter('orderId1', $value);
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getOrderId2()
+    {
+        return $this->getParameter('orderId2');
+    }
+
+    /**
+     * @param string $value
+     * @return $this
+     */
+    public function setOrderId2($value)
+    {
+        return $this->setParameter('orderId2', $value);
+    }
+
     public function getData()
     {
         $this->validate('merchantId', 'sharedSecret', 'country', 'language', 'currency', 'card');
@@ -57,39 +112,21 @@ class InvoiceAuthorizeRequest extends AbstractInvoiceRequest
         }
         $data['pno'] = $pno;
         $data['articles'] = $this->extractArticles($this->getItems());
+        $data['orderId1'] = $this->getOrderId1();
+        $data['orderId2'] = $this->getOrderId2();
+
         return $data;
     }
 
 
     public function sendData($data)
     {
-        $k = $this->createKlarnaConnector($data);
+        $k = $this->prepareConnector($data);
 
-        /** @var \Subscribo\Omnipay\Shared\CreditCard $card */
-        $card = $data['card'];
-        $billingAddress = $this->createKlarnaAddr($card);
-        if ($card->getShippingContactDifferences()) {
-            $shippingAddress = $this->createKlarnaAddr($card, true);
-        } else {
-            $shippingAddress = $billingAddress;
-        }
-        $k->setAddress(KlarnaFlags::IS_BILLING, $billingAddress);
-        $k->setAddress(KlarnaFlags::IS_SHIPPING, $shippingAddress);
-        foreach ($data['articles'] as $article) {
-            $flags = isset($article['flags']) ? $article['flags'] : KlarnaFlags::INC_VAT;
-            $k->addArticle(
-                $article['quantity'],
-                $article['artNo'],
-                $article['title'],
-                $article['price'],
-                $article['vat'],
-                $article['discount'],
-                $flags
-            );
-        }
         $result = $k->reserveAmount($data['pno'], $data['gender'], $data['amount']);
 
         $this->response = $this->createResponse($result);
+
         return $this->response;
     }
 
@@ -108,6 +145,7 @@ class InvoiceAuthorizeRequest extends AbstractInvoiceRequest
             $parameters['price'] = $amount;
         }
         $widget = new InvoiceWidget($parameters);
+
         return $widget;
     }
 
@@ -134,7 +172,45 @@ class InvoiceAuthorizeRequest extends AbstractInvoiceRequest
         }
         $summarized = $k->summarizeGoodsList();
         $amount = bcdiv(strval($summarized), '100', 2);
+
         return $amount;
+    }
+
+    /**
+     * @param $data
+     * @return Klarna
+     */
+    protected function prepareConnector($data)
+    {
+        $connector = $this->createKlarnaConnector($data);
+
+        /** @var \Subscribo\Omnipay\Shared\CreditCard $card */
+        $card = $data['card'];
+        $billingAddress = $this->createKlarnaAddr($card);
+        if ($card->getShippingContactDifferences()) {
+            $shippingAddress = $this->createKlarnaAddr($card, true);
+        } else {
+            $shippingAddress = $billingAddress;
+        }
+        $connector->setAddress(KlarnaFlags::IS_BILLING, $billingAddress);
+        $connector->setAddress(KlarnaFlags::IS_SHIPPING, $shippingAddress);
+        foreach ($data['articles'] as $article) {
+            $flags = isset($article['flags']) ? $article['flags'] : KlarnaFlags::INC_VAT;
+            $connector->addArticle(
+                $article['quantity'],
+                $article['artNo'],
+                $article['title'],
+                $article['price'],
+                $article['vat'],
+                $article['discount'],
+                $flags
+            );
+        }
+        if (isset($data['orderId1']) or isset($data['orderId2'])) {
+            $connector->setEstoreInfo($data['orderId1'], $data['orderId2']);
+        }
+
+        return $connector;
     }
 
     /**

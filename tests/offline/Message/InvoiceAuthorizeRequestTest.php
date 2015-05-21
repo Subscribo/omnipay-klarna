@@ -79,13 +79,13 @@ class InvoiceAuthorizeRequestTest extends TestCase
     public function testGetData()
     {
         $request = new InvoiceAuthorizeRequest($this->getHttpClient(), $this->getHttpRequest());
-        $request->setMerchantId($this->merchantId);
-        $request->setSharedSecret($this->sharedSecret);
-        $request->setLocale('de_at');
-        $request->setTestMode(true);
-        $request->setClientIp('192.0.2.1');
-        $request->setCard($this->card);
-        $request->setItems($this->shoppingCart);
+        $this->assertSame($request, $request->setMerchantId($this->merchantId));
+        $this->assertSame($request, $request->setSharedSecret($this->sharedSecret));
+        $this->assertSame($request, $request->setLocale('de_at'));
+        $this->assertSame($request, $request->setTestMode(true));
+        $this->assertSame($request, $request->setClientIp('192.0.2.1'));
+        $this->assertSame($request, $request->setCard($this->card));
+        $this->assertSame($request, $request->setItems($this->shoppingCart));
 
         $data = $request->getData();
 
@@ -97,13 +97,14 @@ class InvoiceAuthorizeRequestTest extends TestCase
         $this->assertEmpty($request->getAmount());
         $this->assertSame(0, $request->getAmountInteger());
         $this->assertSame('54.00', $request->calculateAmount());
+        $this->assertNotEmpty($request->getItems());
         $this->assertInstanceOf('Subscribo\\Omnipay\\Shared\\CreditCard', $request->getCard());
         $this->assertSame($this->merchantId, $request->getMerchantId());
         $this->assertSame($this->sharedSecret, $request->getSharedSecret());
 
         $this->assertTrue($data['testMode']);
-        $this->assertNotEmpty($data['merchantId']);
-        $this->assertNotEmpty($data['sharedSecret']);
+        $this->assertNotEmpty($data['articles']);
+        $this->assertInstanceOf('Subscribo\\Omnipay\\Shared\\CreditCard', $data['card']);
         $this->assertSame('m', $data['gender']);
         $this->assertSame(-1, $data['amount']);
         $this->assertSame('de', $data['language']);
@@ -222,6 +223,105 @@ class InvoiceAuthorizeRequestTest extends TestCase
         $data = $request->getData();
         $this->assertSame('410321-9202', $data['pno']);
         $this->assertNull($data['gender']);
+    }
+
+    public function testSetters()
+    {
+        $request = new InvoiceAuthorizeRequest($this->getHttpClient(), $this->getHttpRequest());
+        $this->assertNull($request->getOrderId1());
+        $this->assertNull($request->getOrderId2());
+        $this->assertNull($request->getTransactionId());
+        $this->assertNull($request->getLanguage());
+        $this->assertNull($request->getCountry());
+        $this->assertNull($request->getCurrency());
+        $this->assertNull($request->getClientIp());
+        $this->assertNull($request->getAmount());
+        $this->assertSame(0, $request->getAmountInteger());
+        $this->assertNull($request->getCard());
+        $this->assertNull($request->getItems());
+        $this->assertNull($request->getMerchantId());
+        $this->assertNull($request->getSharedSecret());
+
+        $this->assertNull($request->getDescription());
+        $this->assertNull($request->getReturnUrl());
+        $this->assertNull($request->getCancelUrl());
+        $this->assertNull($request->getCardReference());
+        $this->assertNull($request->getTransactionReference());
+        $this->assertNull($request->getToken());
+
+        $this->assertNull($request->getTestMode());
+        $this->assertSame($request, $request->setTestMode(false));
+        $this->assertFalse($request->getTestMode());
+        $this->assertSame($request, $request->setTestMode(true));
+        $this->assertTrue($request->getTestMode());
+
+        $orderId1 = uniqid();
+        $orderId2 = uniqid().'second';
+
+        $this->assertSame($request, $request->setOrderId1($orderId1));
+        $this->assertSame($request, $request->setOrderId2($orderId2));
+        $this->assertSame($request, $request->setLanguage('de'));
+        $this->assertSame($request, $request->setCountry('AT'));
+        $this->assertSame($request, $request->setCurrency('EUR'));
+        $this->assertSame($orderId1, $request->getOrderId1());
+        $this->assertSame($orderId2, $request->getOrderId2());
+        $this->assertSame($orderId1, $request->getTransactionId());
+        $this->assertSame('de', $request->getLanguage());
+        $this->assertSame('AT', $request->getCountry());
+        $this->assertSame('EUR', $request->getCurrency());
+
+        $transactionId = uniqid().'transaction';
+
+        $this->assertSame($request, $request->setTransactionId($transactionId));
+        $this->assertSame($transactionId, $request->getOrderId1());
+        $this->assertSame($orderId2, $request->getOrderId2());
+        $this->assertSame($transactionId, $request->getTransactionId());
+    }
+
+    public function testInitialize()
+    {
+        $request = new InvoiceAuthorizeRequest($this->getHttpClient(), $this->getHttpRequest());
+        $orderId1 = uniqid();
+        $orderId2 = uniqid();
+        $data = [
+            'testMode' => true,
+            'merchantId' => $this->merchantId,
+            'sharedSecret' => $this->sharedSecret,
+            'locale' => 'sv_se',
+            'orderId1' => $orderId1,
+            'orderId2' => $orderId2,
+            'clientIp' => '192.0.2.1',
+            'card' => [
+                'socialSecurityNumber' => '410321-9202'
+            ]
+        ];
+        $this->assertSame($request, $request->initialize($data));
+
+        $this->assertSame('sv', $request->getLanguage());
+        $this->assertSame('SE', $request->getCountry());
+        $this->assertSame('SEK', $request->getCurrency());
+        $this->assertSame('192.0.2.1', $request->getClientIp());
+        $this->assertTrue($request->getTestMode());
+        $this->assertEmpty($request->getAmount());
+        $this->assertSame(0, $request->getAmountInteger());
+        $this->assertSame('0.00', $request->calculateAmount());
+        $this->assertInstanceOf('Subscribo\\Omnipay\\Shared\\CreditCard', $request->getCard());
+        $this->assertSame($this->merchantId, $request->getMerchantId());
+        $this->assertSame($this->sharedSecret, $request->getSharedSecret());
+
+        $data = $request->getData();
+
+        $this->assertTrue($data['testMode']);
+        $this->assertSame($this->merchantId, $data['merchantId']);
+        $this->assertSame($this->sharedSecret, $data['sharedSecret']);
+        $this->assertNull($data['gender']);
+        $this->assertSame(-1, $data['amount']);
+        $this->assertSame('sv', $data['language']);
+        $this->assertSame('SE', $data['country']);
+        $this->assertSame('SEK', $data['currency']);
+        $this->assertSame('192.0.2.1', $data['clientIp']);
+        $this->assertSame('410321-9202', $data['pno']);
+        $this->assertSame('0.00', $request->calculateAmount());
     }
 
     /**

@@ -87,4 +87,53 @@ class InvoiceCaptureRequestTest extends TestCase
         $this->assertSame($request, $request->setSharedSecret(null));
         $this->assertNull($request->getSharedSecret());
     }
+
+
+    public function testGetData()
+    {
+        $merchantId = uniqid();
+        $sharedSecret = uniqid();
+        $reservationNumber = uniqid();
+        $request = new InvoiceCaptureRequest($this->getHttpClient(), $this->getHttpRequest());
+        $params = [
+            'testMode' => true,
+            'country' => 'AT',
+            'language' => 'de',
+            'currency' => 'EUR',
+            'merchantId' => $merchantId,
+            'sharedSecret' => $sharedSecret,
+            'reservationNumber' => $reservationNumber,
+        ];
+        $this->assertSame($request, $request->initialize($params));
+        $data = $request->getData();
+
+        $this->assertTrue($request->getTestMode());
+        $this->assertSame('de', $request->getLanguage());
+        $this->assertSame('AT', $request->getCountry());
+        $this->assertSame('EUR', $request->getCurrency());
+        $this->assertSame($merchantId, $request->getMerchantId());
+        $this->assertSame($sharedSecret, $request->getSharedSecret());
+        $this->assertSame($reservationNumber, $request->getReservationNumber());
+        $this->assertNull($request->getTransactionId());
+        $this->assertNull($request->getFlags());
+        $this->assertNull($request->getOCRNumber());
+
+        foreach($params as $key => $value) {
+            $this->assertSame($value, $data[$key]);
+        }
+        $this->assertSame([], $data['articles']);
+    }
+
+
+
+    /**
+     * @expectedException \Omnipay\Common\Exception\InvalidRequestException
+     * @expectedExceptionMessage The merchantId parameter is required
+     */
+    public function testGetDataEmpty()
+    {
+        $request = new InvoiceCaptureRequest($this->getHttpClient(), $this->getHttpRequest());
+        $request->setTestMode(true);
+        $data = $request->getData();
+    }
 }
