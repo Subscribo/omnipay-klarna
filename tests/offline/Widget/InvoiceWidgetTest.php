@@ -23,6 +23,7 @@ class InvoiceWidgetTest extends PHPUnit_Framework_TestCase
         $this->assertNull($widget->getAGBUrl());
         $this->assertSame([], $widget->getParameters());
         $this->assertSame([], $widget->getDefaultParameters());
+        $this->assertSame(['merchantId', 'country', 'language', 'price'], $widget->getRequiredParameters());
     }
 
 
@@ -60,7 +61,7 @@ class InvoiceWidgetTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Subscribo\Omnipay\Shared\Exception\WidgetNotRenderableException
+     * @expectedException \Subscribo\Omnipay\Shared\Exception\WidgetInvalidRenderingParametersException
      * @expectedExceptionMessage is required
      */
     public function testInsufficientArgumentForRender()
@@ -70,8 +71,8 @@ class InvoiceWidgetTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Subscribo\Omnipay\Shared\Exception\WidgetNotRenderableException
-     * @expectedExceptionMessage Parameters have to be an array
+     * @expectedException \Subscribo\Omnipay\Shared\Exception\WidgetInvalidRenderingParametersException
+     * @expectedExceptionMessage Parameters should be an array
      */
     public function testInvalidArgumentForRender()
     {

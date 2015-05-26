@@ -3,7 +3,6 @@
 namespace Omnipay\Klarna\Widget;
 
 use Subscribo\Omnipay\Shared\Widget\AbstractWidget;
-use Subscribo\Omnipay\Shared\Exception\WidgetNotRenderableException;
 
 /**
  * Class InvoiceWidget
@@ -12,6 +11,16 @@ use Subscribo\Omnipay\Shared\Exception\WidgetNotRenderableException;
  */
 class InvoiceWidget extends AbstractWidget
 {
+    /**
+     * Parameters required for render() and renderPaymentMethodWidget()
+     *
+     * @return array
+     */
+    public function getRequiredParameters()
+    {
+        return ['merchantId', 'country', 'language', 'price'];
+    }
+
     /**
      * @param int|string $merchantId
      * @param string $locale
@@ -216,18 +225,6 @@ class InvoiceWidget extends AbstractWidget
         $javascript = '<script src="https://cdn.klarna.com/public/kitt/core/v1.0/js/klarna.min.js"></script>'."\n";
         $javascript .= '<script src="https://cdn.klarna.com/public/kitt/toc/v1.1/js/klarna.terms.min.js"></script>';
         return $javascript;
-    }
-
-    /**
-     * @param array $parameters
-     * @return bool
-     */
-    public function isRenderable($parameters = [])
-    {
-        if (is_array($parameters)) {
-            $parameters = array_replace($this->getParameters(), $parameters);
-        }
-        return ! $this->collectRenderingObstacles($parameters, true);
     }
 
     /**
@@ -471,7 +468,6 @@ class InvoiceWidget extends AbstractWidget
         return $this->setParameter('outputDeviceType', $value);
     }
 
-
     /**
      * @return string|null
      */
@@ -521,46 +517,6 @@ class InvoiceWidget extends AbstractWidget
     public function setCharge($value)
     {
         return $this->setParameter('charge', $value);
-    }
-
-    /**
-     * @param array $parameters
-     * @param bool|array $requiredParameters
-     * @return array
-     * @throws \Subscribo\Omnipay\Shared\Exception\WidgetNotRenderableException
-     */
-    protected function checkParameters($parameters = [], $requiredParameters = true)
-    {
-        if (is_array($parameters)) {
-            $parameters = array_replace($this->getParameters(), $parameters);
-        }
-        $obstacles = $this->collectRenderingObstacles($parameters, $requiredParameters);
-        if ($obstacles) {
-            throw new WidgetNotRenderableException(reset($obstacles));
-        }
-        return $parameters;
-    }
-
-    /**
-     * @param array $parameters
-     * @param bool|array $requiredParameters
-     * @return array
-     */
-    protected function collectRenderingObstacles($parameters = [], $requiredParameters = true)
-    {
-        if (true === $requiredParameters) {
-            $requiredParameters = ['merchantId', 'country', 'language', 'price'];
-        }
-        if (( ! is_array($parameters))) {
-            return ['Parameters have to be an array'];
-        }
-        $obstacles = [];
-        foreach ($requiredParameters as $requiredParameter) {
-            if (empty($parameters[$requiredParameter])) {
-                $obstacles[] = "Parameter '".$requiredParameter."' is required";
-            }
-        }
-        return $obstacles;
     }
 
     /**

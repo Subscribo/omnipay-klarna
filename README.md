@@ -36,8 +36,7 @@ For development version use:
 ```json
 {
     "require": {
-        "subscribo/omnipay-klarna": "^0.1.1@dev",
-        "egeloen/http-adapter": "^0.8@dev"
+        "subscribo/omnipay-klarna": "^0.1.1@dev"
     }
 }
 ```
