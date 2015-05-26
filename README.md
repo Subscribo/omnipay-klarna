@@ -36,7 +36,7 @@ For development version use:
 ```json
 {
     "require": {
-        "subscribo/omnipay-klarna": "^0.1.1@dev"
+        "subscribo/omnipay-klarna": "^0.1.*@dev"
     }
 }
 ```
@@ -47,8 +47,10 @@ After updating composer.json run composer update to update your dependencies:
     $ php composer.phar update
 ```
 
-If you want to run online tests, you also need to set environment variables KLARNA_MERCHANT_ID and KLARNA_SHARED_SECRET with your Klarna API test credentials.
-These are also needed for examples, provided in docs/example/invoice (they are used usually around lines 12-13 of the examples, but you can modify it and provide the credentials differently).
+If you want to run online tests, you also need to set environment variables `KLARNA_MERCHANT_ID`
+and `KLARNA_SHARED_SECRET` with your Klarna API test credentials.
+These are also needed for examples, provided in docs/example/invoice
+(they are used usually around lines 12-13 of the examples, but you can modify it and provide the credentials differently).
 
 ## Basic Usage
 
@@ -70,7 +72,7 @@ Additionally these options could be specified:
 * `language`
 * `currency`
 
-You can set up country, language and currency (for supported countries) at once using `setLocale()` method
+You can set up country, language and currency (for supported countries) at once using `setLocale()` method.
 
 For meaning of `testMode` see general [Omnipay documentation](https://thephpleague.com/omnipay)
 
@@ -86,11 +88,11 @@ For use and expected parameters see unit tests and example code
 
 ### OrderIds
 
-You can set up two custom reference identifiers on each invoice - `orderId1` and `orderId2`
-For `InvoiceAuthorizeRequest` and `InvoiceCaptureRequest` parameter `transactionId` is an alias for `orderId1`
+You can set up two custom reference identifiers on each invoice - `orderId1` and `orderId2`.
+For `InvoiceAuthorizeRequest` and `InvoiceCaptureRequest` parameter `transactionId` is an alias for `orderId1`.
 
-You can search for unique orderId (whether orderId1 or orderId2) setting parameter `orderId` in `InvoiceCheckOrderStatusRequest`.
-In `InvoiceCheckOrderStatusRequest` is `transactionId` alias for `orderId`.
+You can search for unique orderId (whether orderId1 or orderId2) setting parameter `orderId`
+in `InvoiceCheckOrderStatusRequest`. In `InvoiceCheckOrderStatusRequest` is `transactionId` an alias for `orderId`.
 
 ### Example code
 
@@ -103,7 +105,8 @@ For example code see:
 
 ### InvoiceWidget
 
-Both `InvoiceGateway` and `InvoiceAuthorizeRequest` have method `getWidget()`, which is returning `InvoiceWidget`, with (among others) following methods
+Both `InvoiceGateway` and `InvoiceAuthorizeRequest` have method `getWidget()`, which is returning `InvoiceWidget`,
+with (among others) following methods:
 
 * `isRenderable()`
 * `render()`
@@ -134,7 +137,8 @@ If you want to run both online and offline tests, run just `phpunit`.
 
 If you want to run offline (not requiring internet connection) tests only, run `phpunit tests/offline`
 
-If you want to run online tests, you also need to set environment variables KLARNA_MERCHANT_ID and KLARNA_SHARED_SECRET with your Klarna API test credentials.
+If you want to run online tests, you also need to set environment variables `KLARNA_MERCHANT_ID`
+and `KLARNA_SHARED_SECRET` with your Klarna API test credentials.
 
 ## Support
 

@@ -53,6 +53,7 @@ try {
             ],
         ];
         $request->setItems($selectedItems);
+        $request->setOrderId1('Some partial order id'); //Let's change orderId1 (aliased as transactionId)
     }
 
     $response = $request->send();
