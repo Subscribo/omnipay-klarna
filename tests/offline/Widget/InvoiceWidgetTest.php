@@ -13,16 +13,36 @@ class InvoiceWidgetTest extends PHPUnit_Framework_TestCase
 
         $this->assertFalse($widget->isRenderable());
         $this->assertSame('', (string) $widget);
-        $this->assertNull($widget->getMerchantId());
-        $this->assertNull($widget->getCountry());
-        $this->assertNull($widget->getLanguage());
-        $this->assertNull($widget->getPrice());
-        $this->assertNull($widget->getCharge());
-        $this->assertNull($widget->getColor());
-        $this->assertNull($widget->getOutputDeviceType());
-        $this->assertNull($widget->getAGBUrl());
-        $this->assertSame([], $widget->getParameters());
-        $this->assertSame([], $widget->getDefaultParameters());
+        $this->assertSame('', $widget->getMerchantId());
+        $this->assertSame('', $widget->getCountry());
+        $this->assertSame('', $widget->getLanguage());
+        $this->assertSame('', $widget->getPrice());
+        $this->assertSame('', $widget->getCharge());
+        $this->assertSame('blue-black', $widget->getColor());
+        $this->assertSame('', $widget->getOutputDeviceType());
+        $this->assertSame('', $widget->getAGBUrl());
+        $expectedParameters = [
+            'merchantId' => '',
+            'country' => '',
+            'language' => '',
+            'price' => '',
+            'charge' => '',
+            'color' => 'blue-black',
+            'outputDeviceType' => '',
+            'AGBUrl' => '',
+        ];
+        $this->assertSame($expectedParameters, $widget->getParameters());
+        $expectedDefaults = [
+            'merchantId' => '',
+            'country' => ['', 'de', 'at', 'dk', 'fi', 'nl', 'no', 'se'],
+            'language' => ['', 'de', 'da', 'fi', 'nl', 'nb', 'sv'],
+            'price' => '',
+            'charge' => '',
+            'color' => ['blue-black', 'white', 'black'],
+            'outputDeviceType' => ['', 'desktop', 'mobile'],
+            'AGBUrl' => '',
+        ];
+        $this->assertSame($expectedDefaults, $widget->getDefaultParameters());
         $this->assertSame(['merchantId', 'country', 'language', 'price'], $widget->getRequiredParameters());
     }
 
@@ -32,11 +52,11 @@ class InvoiceWidgetTest extends PHPUnit_Framework_TestCase
         $widget = new InvoiceWidget();
 
         $merchantId = uniqid();
-        $this->assertNull($widget->getMerchantId());
+        $this->assertSame('', $widget->getMerchantId());
         $this->assertSame($widget, $widget->setMerchantId($merchantId));
         $this->assertSame($merchantId, $widget->getMerchantId());
-        $this->assertSame($widget, $widget->setMerchantId(null));
-        $this->assertNull($widget->getMerchantId());
+        $this->assertSame($widget, $widget->setMerchantId(''));
+        $this->assertSame('', $widget->getMerchantId());
 
         $this->assertSame($widget, $widget->setCountry('at'));
         $this->assertSame('at', $widget->getCountry());

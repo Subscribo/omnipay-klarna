@@ -21,6 +21,21 @@ class InvoiceWidget extends AbstractWidget
         return ['merchantId', 'country', 'language', 'price'];
     }
 
+    
+    public function getDefaultParameters()
+    {
+        return [
+            'merchantId' => '',
+            'country' => ['', 'de', 'at', 'dk', 'fi', 'nl', 'no', 'se'],
+            'language' => ['', 'de', 'da', 'fi', 'nl', 'nb', 'sv'],
+            'price' => '',
+            'charge' => '',
+            'color' => ['blue-black', 'white', 'black'],
+            'outputDeviceType' => ['', 'desktop', 'mobile'],
+            'AGBUrl' => '',
+        ];
+    }
+
     /**
      * @param int|string $merchantId
      * @param string $locale

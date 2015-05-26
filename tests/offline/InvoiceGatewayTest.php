@@ -31,7 +31,7 @@ class InvoiceGatewayTest extends GatewayTestCase
         $widget = $this->gateway->getWidget();
 
         $this->assertInstanceOf('Omnipay\\Klarna\\Widget\\InvoiceWidget', $widget);
-        $this->assertNull($widget->getPrice());
+        $this->assertSame('', $widget->getPrice());
         $this->assertSame($this->merchantId, $widget->getMerchantId());
         $this->assertSame('de', $widget->getLanguage());
         $this->assertSame('AT', $widget->getCountry());
