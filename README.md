@@ -7,10 +7,14 @@
 [Omnipay](https://github.com/thephpleague/omnipay) is a framework agnostic, multi-gateway payment
 processing library for PHP 5.3+. This package implements Klarna support for Omnipay.
 
-## Important note:
+## Important notes:
 
-This is a work-in-progress, unstable version.
-Stable version has not yet been released.
+* This is a work-in-progress, unstable version.
+  Stable version has not yet been released.
+* [Error handling implementation](src/Message/AbstractInvoiceRequest) uses this heuristics:
+  if code of `KlarnaException` thrown is below 0 or above 1100, it is assumed,
+  that it contains [message to be displayed to customer](https://developers.klarna.com/en/at+php/kpm/error-codes),
+  otherwise technical error is assumed and the exception is rethrown.
 
 ## Requirements
 
@@ -26,8 +30,7 @@ For beta version use:
 ```json
 {
     "require": {
-        "subscribo/omnipay-klarna": "^0.1.1@beta",
-        "egeloen/http-adapter": "^0.8@dev"
+        "subscribo/omnipay-klarna": "^0.1.2@beta"
     }
 }
 ```
@@ -50,7 +53,7 @@ After updating composer.json run composer update to update your dependencies:
 If you want to run online tests, you also need to set environment variables `KLARNA_MERCHANT_ID`
 and `KLARNA_SHARED_SECRET` with your Klarna API test credentials.
 These are also needed for examples, provided in docs/example/invoice
-(they are used usually around lines 12-13 of the examples, but you can modify it and provide the credentials differently).
+(they are used usually around lines 12-13 of the examples, but you can modify them and provide credentials differently).
 
 ## Basic Usage
 
@@ -86,6 +89,183 @@ Gateway `Klarna\Invoice` supports these request-sending methods:
 
 For use and expected parameters see unit tests and example code
 
+#### authorize()
+
+You may see [official documentation](https://developers.klarna.com/en/at+php/kpm/invoice-part-payment/3-create-order)
+and related links for additional information.
+
+Method 'authorize()' may have an array with parameters as its optional argument,
+or parameters could be specified via setters on returned `InvoiceAuthorizeRequest` object.
+
+These are required parameters:
+
+* `merchantId` *(may be inherited from gateway)*
+* `sharedSecret` *(may be inherited from gateway)*
+* `country` *(may be inherited from gateway)*
+* `language` *(may be inherited from gateway)*
+* `currency` *(may be inherited from gateway)*
+* `card`
+* `items`
+
+These are optional parameters:
+
+* `amount`
+* `transactionId` alias for `orderId1`
+* `orderId2`
+
+If `amount` is not provided, it is set to `-1` and `items` are used to calculate the amount.
+You may use method `calculateAmount()` to check this value.
+
+##### Card
+
+Customer personal and contact data could be sent via `card` parameter or `setCard()` setter method,
+either in form of an array or a
+[`Subscribo\Omnipay\Shared\CreditCard`](https://github.com/Subscribo/omnipay-subscribo-shared/blob/master/src/Shared/CreditCard.php) object
+extending [`Omnipay\Common\CreditCard`](http://omnipay.thephpleague.com/api/cards)
+
+Following card parameters might be used:
+
+**Personal parameters:**
+
+* `gender` for DE/AT/NL
+* `birthday` for DE/AT/NL
+* `socialSecurityNumber` - personal number for other countries; also may by used for company number when needed
+
+**Address parameters:**
+
+* `phone`
+* `mobile`
+* `firstName`
+* `lastName`
+* `postCode`
+* `city`
+* `country`
+* `company`
+* `address1`
+* `address2`
+
+For DE/AT/NL you can pass house number as `address2`,
+for other countries is `address2` simply attached with space to `address1`.
+
+You can pass also different shipping address using shipping variants of parameters, i.e. `shippingFirstName`...
+
+##### Items
+
+Shopping cart items should be sent via `items` parameter or `setItems()` setter method,
+either in form of an array of arrays, or an array of
+[`Subscribo\Omnipay\Shared\Item`](https://github.com/Subscribo/omnipay-subscribo-shared/blob/master/src/Shared/Item.php) objects
+or a [`Subscribo\Omnipay\Shared\ItemBag`](https://github.com/Subscribo/omnipay-subscribo-shared/blob/master/src/Shared/ItemBag.php) object.
+
+Following item parameters might be used:
+
+* `name` ("title")
+* `identifier` ("article number")
+* `quantity`
+* `price`
+* `taxPercent` ("VAT")
+* `discountPercent` ("discount")
+* `flags`
+
+##### Sending
+
+When all required parameters are set on `InvoiceAuthorizeRequest` object,
+you can call its method `send()`, to receive `InvoiceAuthorizeResponse` object.
+
+`InvoiceAuthorizeResponse` object has following methods:
+
+* `isSuccessful()` - alias for `isAccepted()`
+* `isWaiting()` - alias for `isPending()`
+* `getInvoiceStatus()`
+* `getReservationNumber`
+* `getMessage()`
+* `getCode()`
+
+In case authorization was successful, you can use `getReservationNumber()` for parameter of `capture()` gateway call.
+In case authorization is waiting, you can use `getReservationNumber()`
+for parameter of later `checkOrderStatus()` gateway call.
+
+###### Errors and exceptions
+
+If authorization was rejected, `getMessage()` should contain displayable message for customer
+and `getCode()` exception code number.
+In case of technical error a `KlarnaException` should be thrown.
+
+Important note: in the background, `KlarnaException` is thrown for both technical errors
+and for authorization rejections. However, if the code is below 0 or over 1100,
+it is converted to `InvoiceAuthorizeResponse`.
+See https://developers.klarna.com/en/at+php/kpm/error-codes for more details.
+
+#### capture()
+
+Method 'capture()' may have an array with parameters as its optional argument,
+or parameters could be specified via setters on returned `InvoiceAuthorizeRequest` object.
+
+These are required parameters:
+
+* `merchantId` *(may be inherited from gateway)*
+* `sharedSecret` *(may be inherited from gateway)*
+* `country` *(may be inherited from gateway)*
+* `language` *(may be inherited from gateway)*
+* `currency` *(may be inherited from gateway)*
+* `reservationNumber`
+
+These are optional parameters:
+
+* `OCRNumber`
+* `flags`
+* `transactionId` alias for `orderId1`
+* `orderId2`
+
+##### Sending
+
+When all required parameters are set on `InvoiceCaptureRequest` object,
+you can call its method `send()`, to receive `InvoiceCaptureResponse` object.
+
+`InvoiceCaptureResponse` object has following methods:
+
+* `isSuccessful()` - alias for `isAccepted()`
+* `getTransactionReference` alias for `getInvoiceNumber()`
+* `getRiskStatus()`
+* `getMessage()`
+* `getCode()`
+
+For error and exception handling see [Errors and Exceptions](#errors-and-exceptions) above.
+
+#### checkOrderStatus()
+
+Method 'checkOrderStatus()' may have an array with parameters as its optional argument,
+or parameters could be specified via setters on returned `InvoiceCheckOrderStatusRequest` object.
+
+These are required parameters:
+
+* `merchantId` *(may be inherited from gateway)*
+* `sharedSecret` *(may be inherited from gateway)*
+* `country` *(may be inherited from gateway)*
+* `language` *(may be inherited from gateway)*
+* `currency` *(may be inherited from gateway)*
+
+One of these parameters is also required:
+
+* `reservationNumber`
+* `invoiceNumber`
+* `orderId` or its alias `transactionId`
+
+##### Sending
+
+When all required parameters are set on `InvoiceCheckOrderStatusRequest` object,
+you can call its method `send()`, to receive `InvoiceCheckOrderStatusResponse` object.
+
+`InvoiceCaptureResponse` object has following methods:
+
+* `isSuccessful()` - alias for `isAccepted()`
+* `isWaiting()` - alias for `isPending()`
+* `isDenied()`
+* `getOrderStatus()`
+* `getMessage()`
+* `getCode()`
+
+For error and exception handling see [Errors and Exceptions](#errors-and-exceptions) above.
+
 ### OrderIds
 
 You can set up two custom reference identifiers on each invoice - `orderId1` and `orderId2`.
@@ -108,6 +288,8 @@ For example code see:
 Both `InvoiceGateway` and `InvoiceAuthorizeRequest` have method `getWidget()`, which is returning `InvoiceWidget`,
 with (among others) following methods:
 
+* `getDefaultParameters()`
+* `getRequiredParameters()`
 * `isRenderable()`
 * `render()`
 * `renderPaymentMethodWidget()`
@@ -117,7 +299,40 @@ with (among others) following methods:
 * `renderTermsConsentHtml()`
 * `renderTermsAccountHtml()`
 
-For use and expected parameters see example code
+Class also contains following static methods:
+
+* `assemblePaymentMethodWidgetHtml()`
+* `assembleLogoUrl()`
+* `assembleTooltipHtml()`
+* `assembleTermsInvoiceObject()`
+* `assembleTermsConsentObject()`
+* `assembleTermsAccountObject()`
+* `assembleTermsConsentText()`
+* `assembleLoadJavascript()`
+* `assembleLoadTermsJavascript()`
+
+Parameters for rendering methods could be set via constructor, setter, or passed as keys of argument array.
+Some parameters could be passed only as keys of argument array.
+
+Default rendering method `render()` is an alias for `renderPaymentMethodWidget()` - rendering of
+[part-payment / payment method widget](https://developers.klarna.com/en/at+php/kpm/payment-method-widget)
+
+Required parameters:
+* `merchantId` *(may be inherited from gateway or `InvoiceAuthorizeRequest`)*
+* `country` *(may be inherited from gateway or `InvoiceAuthorizeRequest`)*
+* `language` *(may be inherited from gateway or `InvoiceAuthorizeRequest`)*
+* `price` *(may be inherited `InvoiceAuthorizeRequest` - `amount` or calculated amount)*
+
+Optional parameters:
+* `charge` - "invoice-fee" - numeric string in format `'0.95'`
+* `layout` - argument array key only; if not set the default may be affected by `color` parameter
+* `width` - argument array key only;
+* `height` - argument array key only;
+* `style` - argument array key only; additional style setting of container `<div>`
+
+For use and expected parameters of other rendering methods you may see the [code](src/Widget/InvoiceWidget.php),
+[example code](src/docs/example/invoice/prepare.php) and unit tests as well as
+[official documentation](https://developers.klarna.com/en/at+php/kpm/guidelines) and related links.
 
 ### General instructions
 
