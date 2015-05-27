@@ -11,7 +11,7 @@ processing library for PHP 5.3+. This package implements Klarna support for Omni
 
 * This is a work-in-progress, unstable version.
   Stable version has not yet been released.
-* [Error handling implementation](src/Message/AbstractInvoiceRequest) uses this heuristics:
+* [Error handling implementation](src/Message/AbstractInvoiceRequest.php) uses this heuristics:
   if code of `KlarnaException` thrown is below 0 or above 1100, it is assumed,
   that it contains [message to be displayed to customer](https://developers.klarna.com/en/at+php/kpm/error-codes),
   otherwise technical error is assumed and the exception is rethrown.
@@ -94,7 +94,7 @@ For use and expected parameters see unit tests and example code
 You may see [official documentation](https://developers.klarna.com/en/at+php/kpm/invoice-part-payment/3-create-order)
 and related links for additional information.
 
-Method 'authorize()' may have an array with parameters as its optional argument,
+Method `authorize()` may have an array with parameters as its optional argument,
 or parameters could be specified via setters on returned `InvoiceAuthorizeRequest` object.
 
 These are required parameters:
@@ -197,7 +197,7 @@ See https://developers.klarna.com/en/at+php/kpm/error-codes for more details.
 
 #### capture()
 
-Method 'capture()' may have an array with parameters as its optional argument,
+Method `capture()` may have an array with parameters as its optional argument,
 or parameters could be specified via setters on returned `InvoiceAuthorizeRequest` object.
 
 These are required parameters:
@@ -233,7 +233,7 @@ For error and exception handling see [Errors and Exceptions](#errors-and-excepti
 
 #### checkOrderStatus()
 
-Method 'checkOrderStatus()' may have an array with parameters as its optional argument,
+Method `checkOrderStatus()` may have an array with parameters as its optional argument,
 or parameters could be specified via setters on returned `InvoiceCheckOrderStatusRequest` object.
 
 These are required parameters:
@@ -321,17 +321,17 @@ Required parameters:
 * `merchantId` *(may be inherited from gateway or `InvoiceAuthorizeRequest`)*
 * `country` *(may be inherited from gateway or `InvoiceAuthorizeRequest`)*
 * `language` *(may be inherited from gateway or `InvoiceAuthorizeRequest`)*
-* `price` *(may be inherited `InvoiceAuthorizeRequest` - `amount` or calculated amount)*
+* `price` *(may be inherited from `InvoiceAuthorizeRequest` - `amount` or calculated amount)*
 
 Optional parameters:
 * `charge` - "invoice-fee" - numeric string in format `'0.95'`
 * `layout` - argument array key only; if not set the default may be affected by `color` parameter
-* `width` - argument array key only;
-* `height` - argument array key only;
+* `width` - argument array key only
+* `height` - argument array key only
 * `style` - argument array key only; additional style setting of container `<div>`
 
 For use and expected parameters of other rendering methods you may see the [code](src/Widget/InvoiceWidget.php),
-[example code](src/docs/example/invoice/prepare.php) and unit tests as well as
+[example code](docs/example/invoice/prepare.php) and unit tests as well as
 [official documentation](https://developers.klarna.com/en/at+php/kpm/guidelines) and related links.
 
 ### General instructions
