@@ -118,12 +118,13 @@ try {
         echo '<li><a href="'.$exampleUrlBase.'/capture?reservation_number='.$reservationNumber
             .'&part=1">Capture part of amount</a></li>';
         echo "</ul>\n";
-    } else {
+    } elseif ($response->isWaiting()) {
         echo '<h3>Authorization request is pending</h3>';
         echo '<a href="'.$exampleUrlBase.'/check?reservation_number='.$reservationNumber.'">Check again</a>';
+    } else {
+        echo '<h3>Authorization request was not successful</h3>';
+        echo '<p>Message: '.$response->getMessage().' (Code: '.$response->getCode().')</p>';
     }
-} catch (\KlarnaException $e) {
-    echo '<p>KlarnaException occurred: '.$e->getMessage().' (Code: '.$e->getCode().')</p>';
 } catch (\Exception $e) {
     echo '<p>Some error occurred: '.$e->getMessage().' (Code: '.$e->getCode().')</p>';
 }

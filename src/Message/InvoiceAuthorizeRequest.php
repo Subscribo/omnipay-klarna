@@ -65,18 +65,6 @@ class InvoiceAuthorizeRequest extends AbstractInvoiceRequest
         return $data;
     }
 
-
-    public function sendData($data)
-    {
-        $k = $this->prepareConnector($data);
-
-        $result = $k->reserveAmount($data['pno'], $data['gender'], $data['amount']);
-
-        $this->response = $this->createResponse($result);
-
-        return $this->response;
-    }
-
     /**
      * @param array $parameters
      * @return InvoiceWidget
@@ -160,11 +148,16 @@ class InvoiceAuthorizeRequest extends AbstractInvoiceRequest
         return $connector;
     }
 
+    protected function sendRequestViaConnector(Klarna $connector, array $data)
+    {
+        return $connector->reserveAmount($data['pno'], $data['gender'], $data['amount']);
+    }
+
     /**
-     * @param array $data
+     * @param array|\KlarnaException $data
      * @return InvoiceAuthorizeResponse
      */
-    protected function createResponse(array $data)
+    protected function createResponse($data)
     {
         return new InvoiceAuthorizeResponse($this, $data);
     }
@@ -185,7 +178,7 @@ class InvoiceAuthorizeRequest extends AbstractInvoiceRequest
         $country = strtoupper($isShipping ? $card->getShippingCountry() : $card->getCountry());
         $address1 = $isShipping ? $card->getShippingAddress1() : $card->getAddress1();
         $address2 = $isShipping ? $card->getShippingAddress2() : $card->getAddress2();
-        $company = $isShipping ? $card->getShippingCompany() : $card->getBillingCompany();
+        $company = $isShipping ? $card->getShippingCompany() : $card->getCompany();
 
         $careof = '';
         $street = $address1;

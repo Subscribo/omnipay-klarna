@@ -75,17 +75,18 @@ try {
                 .'&part=1">Capture another part of amount</a></li>';
             echo "</ul>\n";
         }
+    } elseif ($invoiceNumber) {
+        echo '<h3>Risk has not been taken by Klarna</h3>';
+        echo '<p>Sending goods is on your own risk</p>';
     } else {
         echo '<h3>Capture has not been approved</h3>';
+        echo '<p>Message: '.$response->getMessage().' (Code: '.$response->getCode().')</p>';
     }
     echo "<ul>\n";
     echo '<li><a href="'.$exampleUrlBase.'/check?reservation_number='.$reservationNumber
         .'">Check by reservation number</a></li>';
     echo '<li><a href="'.$exampleUrlBase.'/check?invoice_number='.$invoiceNumber.'">Check by invoice number</a></li>';
     echo "</ul>\n";
-
-} catch (\KlarnaException $e) {
-    echo '<p>KlarnaException occurred: '.$e->getMessage().' (Code: '.$e->getCode().')</p>';
 } catch (\Exception $e) {
     echo '<p>Some error occurred: '.$e->getMessage().' (Code: '.$e->getCode().')</p>';
 }

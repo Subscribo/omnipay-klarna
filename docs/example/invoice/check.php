@@ -62,10 +62,11 @@ try {
         }
     } elseif ($response->isDenied()) {
         echo '<h3>Order has been denied</h3>';
-    }
+    } else {
+        echo '<h3>Order status check has failed</h3>';
+        echo '<p>Message: '.$response->getMessage().' (Code: '.$response->getCode().')</p>';
 
-} catch (\KlarnaException $e) {
-    echo '<p>KlarnaException occurred: '.$e->getMessage().' (Code: '.$e->getCode().')</p>';
+    }
 } catch (\Exception $e) {
     echo '<p>Some error occurred: '.$e->getMessage().' (Code: '.$e->getCode().')</p>';
 }

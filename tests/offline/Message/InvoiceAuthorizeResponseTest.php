@@ -27,9 +27,8 @@ class InvoiceAuthorizeResponseTest extends TestCase
         $this->assertNull($response->getTransactionToken());
         $this->assertNull($response->getTransactionReference());
         $this->assertFalse($response->isSuccessful());
-        $this->assertFalse($response->isResolved());
+        $this->assertFalse($response->isAccepted());
         $this->assertFalse($response->isPending());
-        $this->assertFalse($response->isDenied());
         $this->assertFalse($response->isWaiting());
         $this->assertFalse($response->isTransactionToken());
         $this->assertFalse($response->isCancelled());
@@ -53,9 +52,8 @@ class InvoiceAuthorizeResponseTest extends TestCase
         $this->assertNull($response->getTransactionToken());
         $this->assertNull($response->getTransactionReference());
         $this->assertTrue($response->isSuccessful());
-        $this->assertTrue($response->isResolved());
+        $this->assertTrue($response->isAccepted());
         $this->assertFalse($response->isPending());
-        $this->assertFalse($response->isDenied());
         $this->assertFalse($response->isWaiting());
         $this->assertFalse($response->isTransactionToken());
         $this->assertFalse($response->isCancelled());
@@ -79,9 +77,8 @@ class InvoiceAuthorizeResponseTest extends TestCase
         $this->assertNull($response->getTransactionToken());
         $this->assertNull($response->getTransactionReference());
         $this->assertFalse($response->isSuccessful());
-        $this->assertFalse($response->isResolved());
+        $this->assertFalse($response->isAccepted());
         $this->assertTrue($response->isPending());
-        $this->assertFalse($response->isDenied());
         $this->assertTrue($response->isWaiting());
         $this->assertFalse($response->isTransactionToken());
         $this->assertFalse($response->isCancelled());
@@ -105,9 +102,8 @@ class InvoiceAuthorizeResponseTest extends TestCase
         $this->assertNull($response->getTransactionToken());
         $this->assertNull($response->getTransactionReference());
         $this->assertFalse($response->isSuccessful());
-        $this->assertFalse($response->isResolved());
+        $this->assertFalse($response->isAccepted());
         $this->assertFalse($response->isPending());
-        $this->assertTrue($response->isDenied());
         $this->assertFalse($response->isWaiting());
         $this->assertFalse($response->isTransactionToken());
         $this->assertFalse($response->isCancelled());

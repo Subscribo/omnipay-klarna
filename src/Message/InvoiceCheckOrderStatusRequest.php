@@ -90,13 +90,14 @@ class InvoiceCheckOrderStatusRequest extends AbstractInvoiceRequest
     }
 
     /**
+     * @param Klarna $connector
      * @param array $data
-     * @return InvoiceCheckOrderStatusResponse
+     * @return array
+     * @throws \KlarnaException
      * @throws \InvalidArgumentException
      */
-    public function sendData($data)
+    protected function sendRequestViaConnector(Klarna $connector, array $data)
     {
-        $k = $this->createKlarnaConnector($data);
         $type = 0;
         if (( ! empty($data['reservationNumber']))) {
             $id = $data['reservationNumber'];
@@ -111,19 +112,16 @@ class InvoiceCheckOrderStatusRequest extends AbstractInvoiceRequest
         } else {
             throw new InvalidArgumentException('One of reservationNumber, invoiceNumber, orderId or transactionId need to be provided');
         }
+        $result = $connector->checkOrderStatus($id, $type);
 
-        $result = $k->checkOrderStatus($id, $type);
-
-        $this->response = $this->createResponse([$result]);
-
-        return $this->response;
+        return [$result];
     }
 
     /**
-     * @param array $data
+     * @param array|\KlarnaException $data
      * @return InvoiceCheckOrderStatusResponse
      */
-    protected function createResponse(array $data)
+    protected function createResponse($data)
     {
         return new InvoiceCheckOrderStatusResponse($this, $data);
     }
