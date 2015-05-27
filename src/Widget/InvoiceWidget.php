@@ -215,10 +215,10 @@ class InvoiceWidget extends AbstractWidget
             $javascript .= ", linkClassName: '".addslashes($linkClassName)."'";
         }
         if ($openPopupCallback) {
-            //todo to implement
+            $javascript .= ", openPopupCallback: ".$openPopupCallback;
         }
         if ($closePopupCallback) {
-            //todo to implement
+            $javascript .= ", closePopupCallback: ".$closePopupCallback;
         }
         $javascript .= ' });';
         return $javascript;

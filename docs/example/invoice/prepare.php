@@ -21,6 +21,10 @@ $gateway->setMerchantId($merchantId)
     ->setCurrency('eur')
     ->setTestMode(true);
 $widget = $gateway->getWidget(['AGBUrl' => $exampleUrlBase.'/AGB', 'color' => 'blue-black', 'charge' => '0.95']);
+$jsCallbacks = [
+    'openPopupCallback' => 'function(){ alert("Opening!"); }',
+    'closePopupCallback' => 'function(){ alert("Closing!"); }'
+];
 
     echo '<img src="'.$widget->renderLogoUrl(['width' => 200]).'">'."\n";
 ?>
@@ -36,7 +40,7 @@ $widget = $gateway->getWidget(['AGBUrl' => $exampleUrlBase.'/AGB', 'color' => 'b
             <?php echo $widget->renderTermsConsentHtml(); ?>
         </div>
         <div>
-            <?php echo $widget->renderTermsAccountHtml(); ?>
+            <?php echo $widget->renderTermsAccountHtml($jsCallbacks); ?>
         </div>
         <h3> You can try to be invoiced on our behalf. Bellow you can select preferred workflow.</h3>
 
