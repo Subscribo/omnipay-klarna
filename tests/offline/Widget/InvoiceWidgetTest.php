@@ -34,8 +34,8 @@ class InvoiceWidgetTest extends PHPUnit_Framework_TestCase
         $this->assertSame($expectedParameters, $widget->getParameters());
         $expectedDefaults = [
             'merchantId' => '',
-            'country' => ['', 'de', 'at', 'dk', 'fi', 'nl', 'no', 'se'],
-            'language' => ['', 'de', 'da', 'fi', 'nl', 'nb', 'sv'],
+            'country' => ['', 'de', 'at', 'dk', 'fi', 'nl', 'no', 'se', 'us', 'gb'],
+            'language' => ['', 'de', 'da', 'fi', 'nl', 'nb', 'sv', 'en'],
             'price' => '',
             'charge' => '',
             'color' => ['blue-black', 'white', 'black'],

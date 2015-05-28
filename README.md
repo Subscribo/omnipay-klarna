@@ -60,6 +60,7 @@ These are also needed for examples, provided in docs/example/invoice
 The following gateways are provided by this package:
 
 * `Klarna\Invoice`
+* `Klarna\Checkout`
 
 Gateways in this package have following required options:
 
@@ -333,6 +334,16 @@ Optional parameters:
 For use and expected parameters of other rendering methods you may see the [code](src/Widget/InvoiceWidget.php),
 [example code](docs/example/invoice/prepare.php) and unit tests as well as
 [official documentation](https://developers.klarna.com/en/at+php/kpm/guidelines) and related links.
+
+### Usage of gateway `Klarna\Checkout`
+
+Gateway `Klarna\Checkout` supports these request-sending methods:
+
+* `authorize()`
+* `completeAuthorize()`
+* `finalizeAuthorize()` (for PUSH request from Klarna)
+
+For use and expected parameters see unit tests and example code
 
 ### General instructions
 

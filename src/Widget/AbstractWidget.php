@@ -11,18 +11,6 @@ use Subscribo\Omnipay\Shared\Widget\AbstractWidget as Base;
  */
 abstract class AbstractWidget extends Base
 {
-    public function getDefaultParameters()
-    {
-        return [
-            'merchantId' => '',
-            'country' => ['', 'de', 'at', 'dk', 'fi', 'nl', 'no', 'se'],
-            'language' => ['', 'de', 'da', 'fi', 'nl', 'nb', 'sv'],
-            'price' => '',
-            'charge' => '',
-            'color' => ['blue-black', 'white', 'black'],
-        ];
-    }
-
     /**
      * @param int|string $merchantId
      * @param string $locale
@@ -90,11 +78,12 @@ abstract class AbstractWidget extends Base
      * @param string $locale
      * @param string $logoName
      * @param int|string|null $width
-     * @param int|null $layout
+     * @param string|null $layout
      * @return string
      */
     public static function assembleTooltipHtml($merchantId, $locale = 'de_de', $logoName = 'blue-black', $width = null, $layout = null)
     {
+        $locale = ((strtolower($locale) === 'at_de')) ? 'de_de' : $locale;
         $html = '<div class="klarna-widget klarna-logo-tooltip"';
         $html .= ' data-eid="'.$merchantId.'"';
         $html .= ' data-locale="'.$locale.'"';
@@ -115,6 +104,35 @@ abstract class AbstractWidget extends Base
     public static function assembleLoadJavascript()
     {
         return '<script async src="https://cdn.klarna.com/1.0/code/client/all.js"></script>';
+    }
+
+
+    public function render($parameters = [])
+    {
+        return $this->renderPaymentMethodWidget($parameters);
+    }
+
+    /**
+     * Parameters required for render() and renderPaymentMethodWidget()
+     *
+     * @return array
+     */
+    public function getRequiredParameters()
+    {
+        return ['merchantId', 'country', 'language', 'price'];
+    }
+
+
+    public function getDefaultParameters()
+    {
+        return [
+            'merchantId' => '',
+            'country' => ['', 'de', 'at', 'dk', 'fi', 'nl', 'no', 'se', 'us', 'gb'],
+            'language' => ['', 'de', 'da', 'fi', 'nl', 'nb', 'sv', 'en'],
+            'price' => '',
+            'charge' => '',
+            'color' => ['blue-black', 'white', 'black'],
+        ];
     }
 
     /**

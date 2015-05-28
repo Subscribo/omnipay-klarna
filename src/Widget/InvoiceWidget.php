@@ -11,17 +11,6 @@ use Omnipay\Klarna\Widget\AbstractWidget;
  */
 class InvoiceWidget extends AbstractWidget
 {
-    /**
-     * Parameters required for render() and renderPaymentMethodWidget()
-     *
-     * @return array
-     */
-    public function getRequiredParameters()
-    {
-        return ['merchantId', 'country', 'language', 'price'];
-    }
-
-
     public function getDefaultParameters()
     {
         $result = parent::getDefaultParameters();
@@ -141,15 +130,6 @@ class InvoiceWidget extends AbstractWidget
         $javascript = '<script src="https://cdn.klarna.com/public/kitt/core/v1.0/js/klarna.min.js"></script>'."\n";
         $javascript .= '<script src="https://cdn.klarna.com/public/kitt/toc/v1.1/js/klarna.terms.min.js"></script>';
         return $javascript;
-    }
-
-    /**
-     * @param array $parameters
-     * @return string
-     */
-    public function render($parameters = [])
-    {
-        return $this->renderPaymentMethodWidget($parameters);
     }
 
     /**

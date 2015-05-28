@@ -50,7 +50,13 @@
         "subscribo/klarna-invoice-sdk-wrapped": "^1.0.1"
     },
     "require-dev": {
-        "omnipay/tests": "^2.0"
+        "omnipay/tests": "^2.0",
+        "klarna/checkout": "1.2",
+        "subscribo/psr-http-message-tools": ">=0.3.1 <0.5"
+    },
+    "suggest": {
+        "klarna/checkout": "(1.2) For Klarna Checkout",
+        "subscribo/psr-http-message-tools": "(>=0.3.1 <0.5) For Klarna Checkout"
     },
     "extra": {
         "branch-alias": {
