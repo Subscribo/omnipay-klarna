@@ -392,6 +392,7 @@ class InvoiceGatewayOnlineTest extends GatewayTestCase
     {
         $data = [
             'card' => $this->deniedCard,
+            'orderId1' => 'Denied: '.('H:i:s'),
         ];
         $request = $this->gateway->authorize($data);
         $this->assertInstanceOf('\\Omnipay\\Klarna\\Message\\InvoiceAuthorizeRequest', $request);
