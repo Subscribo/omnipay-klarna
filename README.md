@@ -2,7 +2,8 @@
 
 **Klarna driver for the Omnipay PHP payment processing library**
 
-[![Build Status](https://travis-ci.org/Subscribo/omnipay-klarna.svg?branch=master)](https://travis-ci.org/Subscribo/omnipay-klarna)
+Master branch: [![Build Status](https://travis-ci.org/Subscribo/omnipay-klarna.svg?branch=master)](https://travis-ci.org/Subscribo/omnipay-klarna)
+Feature Checkout branch: [![Build Status](https://travis-ci.org/Subscribo/omnipay-klarna.svg?branch=feature%2Fcheckout)](https://travis-ci.org/Subscribo/omnipay-klarna)
 
 [Omnipay](https://github.com/thephpleague/omnipay) is a framework agnostic, multi-gateway payment
 processing library for PHP 5.3+. This package implements Klarna support for Omnipay.
@@ -40,6 +41,18 @@ For development version use:
 {
     "require": {
         "subscribo/omnipay-klarna": "^0.1.*@dev"
+    }
+}
+```
+
+When you want to use feature branch Checkout, use:
+
+```json
+{
+    "require": {
+        "subscribo/omnipay-klarna": "dev-feature/checkout",
+        "klarna/checkout": "1.2",
+        "subscribo/psr-http-message-tools": ">=0.3.1 <0.5"
     }
 }
 ```
