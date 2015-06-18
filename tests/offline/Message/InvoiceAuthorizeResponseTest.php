@@ -2,6 +2,7 @@
 
 namespace Omnipay\Klarna\Message;
 
+use KlarnaException;
 use Omnipay\Tests\TestCase;
 use Omnipay\Klarna\Message\InvoiceAuthorizeResponse;
 use Omnipay\Klarna\Message\InvoiceAuthorizeRequest;
@@ -111,5 +112,28 @@ class InvoiceAuthorizeResponseTest extends TestCase
         $this->assertFalse($response->isTransparentRedirect());
         $this->assertFalse($response->haveWidget());
         $this->assertSame($data, $response->getData());
+    }
+
+    public function testErrorResponse()
+    {
+        $exception = new KlarnaException('Some message', 2000);
+        $response = new InvoiceAuthorizeResponse($this->request, $exception);
+        $this->assertNull($response->getReservationNumber());
+        $this->assertNull($response->getInvoiceStatus());
+        $this->assertSame(2000, $response->getCode());
+        $this->assertSame('Some message', $response->getMessage());
+        $this->assertNull($response->getWidget());
+        $this->assertNull($response->getTransactionToken());
+        $this->assertNull($response->getTransactionReference());
+        $this->assertFalse($response->isSuccessful());
+        $this->assertFalse($response->isAccepted());
+        $this->assertFalse($response->isPending());
+        $this->assertFalse($response->isWaiting());
+        $this->assertFalse($response->isTransactionToken());
+        $this->assertFalse($response->isCancelled());
+        $this->assertFalse($response->isRedirect());
+        $this->assertFalse($response->isTransparentRedirect());
+        $this->assertFalse($response->haveWidget());
+        $this->assertSame($exception, $response->getData());
     }
 }
