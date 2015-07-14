@@ -161,7 +161,6 @@ class InvoiceWidgetTest extends PHPUnit_Framework_TestCase
 
 
         $expectedLogoUrl = 'https://cdn.klarna.com/1.0/shared/image/generic/logo/de_at/basic/white.png';
-        $expectedLogoUrl2 = 'https://cdn.klarna.com/1.0/shared/image/generic/logo/de_at/basic/white.png';
         $this->assertSame($expectedLogoUrl, $widget->renderLogoUrl());
         $expectedLogoUrl2 = 'https://cdn.klarna.com/1.0/shared/image/generic/logo/de_at/basic/black.png?width=400';
         $this->assertSame($expectedLogoUrl2, $widget->renderLogoUrl(['color' => 'black', 'width' => 400]));
