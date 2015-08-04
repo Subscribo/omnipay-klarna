@@ -2,7 +2,8 @@
 
 **Klarna driver for the Omnipay PHP payment processing library**
 
-[![Build Status](https://travis-ci.org/Subscribo/omnipay-klarna.svg?branch=master)](https://travis-ci.org/Subscribo/omnipay-klarna)
+Master branch: [![Build Status](https://travis-ci.org/Subscribo/omnipay-klarna.svg?branch=master)](https://travis-ci.org/Subscribo/omnipay-klarna)
+Feature Checkout branch: [![Build Status](https://travis-ci.org/Subscribo/omnipay-klarna.svg?branch=feature%2Fcheckout)](https://travis-ci.org/Subscribo/omnipay-klarna)
 
 [Omnipay](https://github.com/thephpleague/omnipay) is a framework agnostic, multi-gateway payment
 processing library for PHP 5.3+. This package implements Klarna support for Omnipay.
@@ -44,6 +45,18 @@ For development version use:
 }
 ```
 
+When you want to use feature branch Checkout, use:
+
+```json
+{
+    "require": {
+        "subscribo/omnipay-klarna": "dev-feature/checkout",
+        "klarna/checkout": "1.2",
+        "subscribo/psr-http-message-tools": ">=0.3.1 <0.5"
+    }
+}
+```
+
 After updating composer.json run composer update to update your dependencies:
 ```sh
     $ curl -s http://getcomposer.org/installer | php
@@ -60,6 +73,7 @@ These are also needed for examples, provided in docs/example/invoice
 The following gateways are provided by this package:
 
 * `Klarna\Invoice`
+* `Klarna\Checkout` (only available in branch dev-feature/checkout)
 
 Gateways in this package have following required options:
 
@@ -129,7 +143,7 @@ Following card parameters might be used:
 
 * `gender` for DE/AT/NL
 * `birthday` for DE/AT/NL
-* `socialSecurityNumber` - personal number for other countries; also may by used for company number when needed
+* `nationalIdentificationNumber` - personal number for other countries; also may by used for company number when needed
 
 **Address parameters:**
 
