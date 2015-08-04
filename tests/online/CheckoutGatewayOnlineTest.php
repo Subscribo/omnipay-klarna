@@ -2,10 +2,9 @@
 
 namespace Omnipay\Klarna;
 
-use KlarnaFlags;
 use Omnipay\Tests\GatewayTestCase;
 use Omnipay\Klarna\CheckoutGateway;
-use Omnipay\Klarna\Message\InvoiceCheckOrderStatusRequest;
+use Subscribo\Omnipay\Shared\CreditCard;
 
 class CheckoutGatewayOnlineTest extends GatewayTestCase
 {
@@ -23,7 +22,7 @@ class CheckoutGatewayOnlineTest extends GatewayTestCase
         $this->gateway->setSharedSecret($this->sharedSecret);
 
         $this->card = $card = [
-            'gender' => 'Male',
+            'gender' => CreditCard::GENDER_MALE,
             'birthday' => '1960-04-14',
             'firstName' => 'Testperson-at',
             'lastName' => 'Approved',
