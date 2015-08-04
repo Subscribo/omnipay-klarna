@@ -48,12 +48,18 @@ class InvoiceAuthorizeRequest extends AbstractInvoiceRequest
                 if (empty($pno)) {
                     throw new InvalidRequestException('Birthday is a required parameter for AT/DE/NL');
                 }
-                $data['gender'] = strtolower(substr($gender, 0, 1));
+                if (CreditCard::GENDER_MALE === $gender) {
+                    $data['gender'] = 'm';
+                } elseif (CreditCard::GENDER_FEMALE === $gender) {
+                    $data['gender'] = 'f';
+                } else {
+                    $data['gender'] = strtolower(substr($gender, 0, 1));
+                }
                 break;
             default:
-                $pno = $card->getSocialSecurityNumber();
+                $pno = $card->getNationalIdentificationNumber();
                 if (empty($pno)) {
-                    throw new InvalidRequestException('SocialSecurityNumber is a required parameter for this country');
+                    throw new InvalidRequestException('NationalIdentificationNumber is a required parameter for this country');
                 }
                 $data['gender'] = null;
         }

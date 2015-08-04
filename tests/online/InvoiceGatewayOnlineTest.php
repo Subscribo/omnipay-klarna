@@ -2,10 +2,10 @@
 
 namespace Omnipay\Klarna;
 
-use KlarnaFlags;
 use Omnipay\Tests\GatewayTestCase;
 use Omnipay\Klarna\InvoiceGateway;
 use Omnipay\Klarna\Message\InvoiceCheckOrderStatusRequest;
+use Subscribo\Omnipay\Shared\CreditCard;
 
 class InvoiceGatewayOnlineTest extends GatewayTestCase
 {
@@ -34,7 +34,7 @@ class InvoiceGatewayOnlineTest extends GatewayTestCase
             'email'    => 'youremail@email.com',
         ];
         $this->deniedCard = $deniedCard = [
-            'gender' => 'Female',
+            'gender' => CreditCard::GENDER_FEMALE,
             'birthday' => '1980-04-14',
             'firstName' => 'Testperson-at',
             'lastName' => 'Denied',
@@ -492,7 +492,7 @@ class InvoiceGatewayOnlineTest extends GatewayTestCase
             'shippingPostCode' => '12334',
             'phone'    => '0765260000',
             'email'    => 'youremail@email.com',
-            'socialSecurityNumber' => '002031-0132'
+            'nationalIdentificationNumber' => '002031-0132'
         ];
         $data = [
             'card' => $card,

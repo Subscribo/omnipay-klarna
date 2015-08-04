@@ -45,8 +45,8 @@
     "require": {
         "php": "^5.4 || 7.0@dev",
         "omnipay/common": "^2.3.4",
-        "subscribo/omnipay-subscribo-shared": "^0.3.0",
-        "subscribo/klarna-invoice-sdk-wrapped": "^1.0.1"
+        "subscribo/omnipay-subscribo-shared": "^0.3.5",
+        "subscribo/klarna-invoice-sdk-wrapped": "^1.0.3"
     },
     "require-dev": {
         "omnipay/tests": "^2.0",
