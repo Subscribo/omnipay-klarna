@@ -73,7 +73,7 @@ These are also needed for examples, provided in docs/example/invoice
 The following gateways are provided by this package:
 
 * `Klarna\Invoice`
-* `Klarna\Checkout`
+* `Klarna\Checkout` (only available in branch dev-feature/checkout)
 
 Gateways in this package have following required options:
 
@@ -143,7 +143,7 @@ Following card parameters might be used:
 
 * `gender` for DE/AT/NL
 * `birthday` for DE/AT/NL
-* `socialSecurityNumber` - personal number for other countries; also may by used for company number when needed
+* `nationalIdentificationNumber` - personal number for other countries; also may by used for company number when needed
 
 **Address parameters:**
 
