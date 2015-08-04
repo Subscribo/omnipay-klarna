@@ -4,6 +4,7 @@ namespace Omnipay\Klarna\Message;
 
 use Omnipay\Tests\TestCase;
 use Omnipay\Klarna\Message\InvoiceAuthorizeRequest;
+use Subscribo\Omnipay\Shared\CreditCard;
 
 class InvoiceAuthorizeRequestTest extends TestCase
 {
@@ -12,7 +13,7 @@ class InvoiceAuthorizeRequestTest extends TestCase
         $this->merchantId = uniqid();
         $this->sharedSecret = uniqid();
         $this->card = [
-            'gender' => 'Male',
+            'gender' => CreditCard::GENDER_MALE,
             'birthday' => '1960-04-14',
             'firstName' => 'Testperson-at',
             'lastName' => 'Approved',
@@ -148,7 +149,7 @@ class InvoiceAuthorizeRequestTest extends TestCase
     /**
      * @expectedException \Omnipay\Common\Exception\InvalidRequestException
      */
-    public function testMissingSocialSecurityNumber()
+    public function testMissingNationalIdentificationNumber()
     {
         $request = new InvoiceAuthorizeRequest($this->getHttpClient(), $this->getHttpRequest());
         $request->setMerchantId($this->merchantId);
@@ -217,7 +218,7 @@ class InvoiceAuthorizeRequestTest extends TestCase
             'country'  => 'se',
             'phone'    => '0765260000',
             'email'    => 'youremail@email.com',
-            'socialSecurityNumber' => '410321-9202'
+            'nationalIdentificationNumber' => '410321-9202'
         ];
         $request->setCard($card);
         $data = $request->getData();
@@ -292,7 +293,7 @@ class InvoiceAuthorizeRequestTest extends TestCase
             'orderId2' => $orderId2,
             'clientIp' => '192.0.2.1',
             'card' => [
-                'socialSecurityNumber' => '410321-9202'
+                'nationalIdentificationNumber' => '410321-9202'
             ]
         ];
         $this->assertSame($request, $request->initialize($data));
