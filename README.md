@@ -31,7 +31,7 @@ For beta version use:
 ```json
 {
     "require": {
-        "subscribo/omnipay-klarna": "^0.1.3"
+        "subscribo/omnipay-klarna": "^0.1.4"
     }
 }
 ```
