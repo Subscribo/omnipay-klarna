@@ -24,14 +24,14 @@ processing library for PHP 5.3+. This package implements Klarna support for Omni
 
 ## Installation
 
-Omnipay Klarna driver is installed via [Composer](http://getcomposer.org/). To install, add it
-to your `composer.json` file (you might need to add also development version of egeloen/http-adapter).
+Omnipay Klarna driver is installed via [Composer](http://getcomposer.org/).
+To install, add it to your `composer.json` file:
 
 For beta version use:
 ```json
 {
     "require": {
-        "subscribo/omnipay-klarna": "^0.1.2@beta"
+        "subscribo/omnipay-klarna": "^0.1.3"
     }
 }
 ```
@@ -52,7 +52,7 @@ When you want to use feature branch Checkout, use:
     "require": {
         "subscribo/omnipay-klarna": "dev-feature/checkout",
         "klarna/checkout": "1.2",
-        "subscribo/psr-http-message-tools": ">=0.3.1 <0.5"
+        "subscribo/psr-http-message-tools": "~0.4.3"
     }
 }
 ```

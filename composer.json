@@ -43,10 +43,10 @@
         "psr-4": {"Omnipay\\Klarna\\": "src/"}
     },
     "require": {
-        "php": "^5.4 || 7.0@dev",
-        "omnipay/common": "^2.3.4",
-        "subscribo/omnipay-subscribo-shared": "^0.3.5",
-        "subscribo/klarna-invoice-sdk-wrapped": "^1.0.3"
+        "php": ">=5.4",
+        "omnipay/common": "^2.5.0",
+        "subscribo/omnipay-subscribo-shared": "^0.3.8",
+        "subscribo/klarna-invoice-sdk-wrapped": "^1.1.0"
     },
     "require-dev": {
         "omnipay/tests": "^2.0",
